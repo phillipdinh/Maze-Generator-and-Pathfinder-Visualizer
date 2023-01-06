@@ -1,11 +1,8 @@
-// Performs Dijkstra's algorithm; returns *all* nodes in the order
-// in which they were visited. Also makes nodes point back to their
-// previous node, effectively allowing us to compute the shortest path
-// by backtracking from the finish node.
+import { getNeighbors } from "../components/Maze/Maze";
 export default function dijkstra(maze) {
   // Returns object with keys of neighbors and boolean values
 
-	/*TODO:
+  /*TODO:
 		Add shortest path animation
 	*/
   const visitedNodesInOrder = [];
@@ -20,14 +17,16 @@ export default function dijkstra(maze) {
     // If the closest node is at a distance of infinity,
     // we must be trapped and should therefore stop.
     if (closestNode.distance === Infinity) return visitedNodesInOrder;
-    closestNode.isVisited = true;
+    closestNode.visited = true;
     visitedNodesInOrder.push(closestNode);
 
     if (closestNode === maze[15][15]) return visitedNodesInOrder;
-    updateUnvisitedNeighbors(closestNode, maze);
+    updateUnvisited(closestNode, maze);
   }
 }
 
+/////////////////// Helper FUnctions //////////////////////////
+///////////////////////////////////////////////////////////////
 function getAllNodes(maze) {
   const nodes = [];
   for (const row of maze) {
@@ -38,16 +37,7 @@ function getAllNodes(maze) {
   return nodes;
 }
 
-function getNeighbors(col, row) {
-  return {
-    top: row <= 0 ? [-1, -1] : [col, row - 1],
-    right: col >= 15 ? [-1, -1] : [col + 1, row],
-    bottom: row >= 15 ? [-1, -1] : [col, row + 1],
-    left: col <= 0 ? [-1, -1] : [col - 1, row],
-  };
-}
-
-function checkNeighbors(col, row, maze) {
+function checkUnvisited(col, row, maze) {
   //for (const property in object) {
   //console.log(`${property}: ${object[property]}`);
   //}
@@ -82,8 +72,8 @@ function checkNeighbors(col, row, maze) {
   return goodNeighbors;
 }
 
-function updateUnvisitedNeighbors(node, maze) {
-  const goodNeighbors = checkNeighbors(node.col, node.row, maze);
+function updateUnvisited(node, maze) {
+  const goodNeighbors = checkUnvisited(node.col, node.row, maze);
 
   for (const n of goodNeighbors) {
     n.distance = node.distance + 1;
