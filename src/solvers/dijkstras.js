@@ -9,7 +9,6 @@ export default function dijkstra(maze) {
   maze[0][0].distance = 0;
 
   const unvisitedNodes = getAllNodes(maze);
-  console.log(maze);
   while (!!unvisitedNodes.length) {
     unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
     const closestNode = unvisitedNodes.shift();
@@ -21,7 +20,10 @@ export default function dijkstra(maze) {
     visitedNodesInOrder.push(closestNode);
 
     if (closestNode === maze[15][15]) return visitedNodesInOrder;
+    console.log(closestNode);
+    console.log(maze);
     updateUnvisited(closestNode, maze);
+    console.log(maze);
   }
 }
 
@@ -38,15 +40,6 @@ function getAllNodes(maze) {
 }
 
 function checkUnvisited(col, row, maze) {
-  //for (const property in object) {
-  //console.log(`${property}: ${object[property]}`);
-  //}
-
-  // expected output:
-  // "a: 1"
-  // "b: 2"
-  // "c: 3"
-
   const neighbors = getNeighbors(col, row);
   const goodNeighbors = [];
 
@@ -79,4 +72,17 @@ function updateUnvisited(node, maze) {
     n.distance = node.distance + 1;
     n.previousNode = node;
   }
+}
+
+// Backtracks from the finishNode to find the shortest path.
+// Only works when called *after* the dijkstra method above.
+export function getNodesInShortestPathOrder(finishNode) {
+  const nodesInShortestPathOrder = [];
+  let currentNode = finishNode;
+  while (currentNode !== null) {
+    console.log(currentNode);
+    nodesInShortestPathOrder.unshift(currentNode);
+    currentNode = currentNode.previousNode;
+  }
+  return nodesInShortestPathOrder;
 }
