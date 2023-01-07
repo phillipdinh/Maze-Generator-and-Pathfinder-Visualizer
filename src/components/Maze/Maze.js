@@ -1,29 +1,19 @@
 import React from "react";
 import Node from "../Node/Node";
-import dijkstra from "../../solvers/dijkstras";
+import dijkstra, { getNodesInShortestPathOrder } from "../../solvers/dijkstras";
 import dfsGen from "../../generators/dfs-recursive-backtrack";
+import prim from "../../generators/prim";
 import "./Maze.css";
+
 /*TODO:
 	Add all my other algorithms
 */
 export default function Maze() {
-  const oppDir = {
-    top: "bottom",
-    bottom: "top",
-    left: "right",
-    right: "left",
-  };
-
   function animateDFSGen(visitedNodesInOrder) {
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       // If a direction
       if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
         const node = visitedNodesInOrder[i];
-
-        setTimeout(() => {
-          document.getElementById(`node-${node.col}-${node.row}`).className =
-            "node node-visited";
-        }, 10 * i);
         if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
           const direction = visitedNodesInOrder[i + 1];
           const oppDirection = oppDir[direction];
@@ -35,28 +25,98 @@ export default function Maze() {
             updateMaze(nextNode[0], nextNode[1], oppDirection, true);
           }, 10 * i);
         }
+
+        if (
+          (node.col === 0 && node.row === 0) ||
+          (node.col === 15 && node.row === 15)
+        ) {
+          continue;
+        } else {
+          setTimeout(() => {
+						updateMaze(node.col, node.row, "walls", true);
+          }, 10 * i);
+					
+
+					
+        }
       }
     }
   }
   function visualizeDFSGen() {
+		resetMaze()
     const visitedNodesInOrder = dfsGen(maze);
-    console.log(visitedNodesInOrder);
     animateDFSGen(visitedNodesInOrder);
+  }
+
+	function animatePrim(visitedNodesInOrder) {
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      // If a direction
+      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
+        const node = visitedNodesInOrder[i];
+        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
+          const direction = visitedNodesInOrder[i + 1];
+          const oppDirection = oppDir[direction];
+          const neighbors = getNeighbors(node.col, node.row);
+          const nextNode = neighbors[direction];
+
+          setTimeout(() => {
+            updateMaze(node.col, node.row, direction, true);
+            updateMaze(nextNode[0], nextNode[1], oppDirection, true);
+          }, 10 * i);
+        }
+
+        if (
+          (node.col === 0 && node.row === 0) ||
+          (node.col === 15 && node.row === 15)
+        ) {
+          continue;
+        } else {
+          setTimeout(() => {
+						updateMaze(node.col, node.row, "walls", true);
+          }, 10 * i);
+        }
+      }
+    }
+  }
+
+	function visualizePrim(){
+		resetMaze();
+		const visitedNodesInOrder = prim(maze);
+		animatePrim(visitedNodesInOrder);
+	}
+  function animateShortestPathDij(nodesInShortestPath) {
+    for (let i = 0; i < nodesInShortestPath.length; i++) {
+      setTimeout(() => {
+        const node = nodesInShortestPath[i];
+				updateMaze(node.col, node.row, "walls", false);
+				updateMaze(node.col, node.row, "sp", true);
+      }, 50 * i);
+    }
   }
 
   function animateDijkstra(visitedNodesInOrder) {
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       setTimeout(() => {
         const node = visitedNodesInOrder[i];
-        console.log(node);
-        document.getElementById(`node-${node.col}-${node.row}`).className =
-          "node node-visited";
+				updateMaze(node.col, node.row, "walls", false);
+				updateMaze(node.col, node.row, "checked", true);
       }, 10 * i);
+
+      if (i === visitedNodesInOrder.length - 1) {
+        const lastNode = maze[15][15];
+        const nodesInShortestPath = getNodesInShortestPathOrder(lastNode);
+        if (i === visitedNodesInOrder.length - 1) {
+          setTimeout(() => {
+            animateShortestPathDij(nodesInShortestPath);
+          }, 10 * i);
+        }
+      }
     }
   }
+
   function visualizeDijkstras() {
+    resetMaze();
     const visitedNodesInOrder = dijkstra(maze);
-    console.log(visitedNodesInOrder);
     animateDijkstra(visitedNodesInOrder);
   }
 
@@ -66,7 +126,23 @@ export default function Maze() {
     setMaze(copyMaze);
   }
 
-  // eslint-disable-next-line no-unused-vars
+  function resetMaze() {
+    // eslint-disable-next-line array-callback-return
+    maze.map((row, rowIdx) => {
+      // eslint-disable-next-line array-callback-return
+      row.map((node, colIdx) => {
+        updateMaze(colIdx, rowIdx, "visited", false);
+      });
+    });
+  }
+
+  const oppDir = {
+    top: "bottom",
+    bottom: "top",
+    left: "right",
+    right: "left",
+  };
+
   const [maze, setMaze] = React.useState(mazeInit());
 
   const styles = {
@@ -86,6 +162,14 @@ export default function Maze() {
             }}
           >
             DFS
+          </button>
+					<button
+            className="maze-button"
+            onClick={() => {
+              visualizePrim();
+            }}
+          >
+            Prim
           </button>
         </div>
 
@@ -115,8 +199,12 @@ export default function Maze() {
                     bottom,
                     left,
                     right,
+										walls,
                     visited,
                     distance,
+                    previousNode,
+										sp,
+										checked,
                   } = node;
                   return (
                     <Node
@@ -127,8 +215,12 @@ export default function Maze() {
                       bottom={bottom}
                       left={left}
                       right={right}
+											walls={walls}
                       visited={visited}
                       distance={distance}
+                      previousNode={previousNode}
+											sp={sp}
+											checked={checked}
                     ></Node>
                   );
                 })}
@@ -150,8 +242,11 @@ const createNode = (row, col) => {
     left: false,
     right: false,
     visited: false,
+		walls: false,
     distance: Infinity,
     previousNode: null,
+		sp: false,
+		checked: false,
   };
 };
 
@@ -187,7 +282,6 @@ export function checkNeighbors(col, row, neighbors, maze) {
       const goodNeighbor = maze[c][r];
       return goodNeighbor;
     }
-    console.log(maze[c][r]);
     return false;
   });
 }
