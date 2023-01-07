@@ -8,9 +8,7 @@ export default function dfsGen(grid) {
 
     if (visitedCount < maze.length * maze[0].length) {
       const neighbors = getNeighbors(col, row);
-
       const goodNeighbors = checkNeighbors(col, row, neighbors, maze);
-      console.log(goodNeighbors);
       const randDir = getRand(goodNeighbors);
 
       if (randDir) {
@@ -40,11 +38,7 @@ export default function dfsGen(grid) {
   const list = [];
   var visitedCount = 0;
 
-  console.log(maze);
   backTrack(0, 0, maze);
-
-  console.log(visitedCount);
-  console.log(visitedNodesInOrder);
 
   return visitedNodesInOrder;
 }
