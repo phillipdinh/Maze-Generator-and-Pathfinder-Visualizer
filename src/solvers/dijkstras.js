@@ -20,10 +20,9 @@ export default function dijkstra(maze) {
     visitedNodesInOrder.push(closestNode);
 
     if (closestNode === maze[15][15]) return visitedNodesInOrder;
-    console.log(closestNode);
-    console.log(maze);
+
     updateUnvisited(closestNode, maze);
-    console.log(maze);
+
   }
 }
 
@@ -80,7 +79,6 @@ export function getNodesInShortestPathOrder(finishNode) {
   const nodesInShortestPathOrder = [];
   let currentNode = finishNode;
   while (currentNode !== null) {
-    console.log(currentNode);
     nodesInShortestPathOrder.unshift(currentNode);
     currentNode = currentNode.previousNode;
   }
