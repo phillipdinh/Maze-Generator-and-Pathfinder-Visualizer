@@ -3,7 +3,9 @@ import { getNeighbors} from "./Maze-Helper";
 
 import Node from "../Node/Node";
 import dijkstra, { getNodesInShortestPathOrder } from "../../solvers/dijkstras";
-import dfsGen from "../../generators/dfs-recursive-backtrack";
+import dfsSolve from "../../solvers/dfs-solve";
+
+import dfsGen from "../../generators/dfs-gen";
 import prim from "../../generators/prim";
 import "./Maze.css";
 
@@ -39,12 +41,11 @@ export default function Maze() {
 						updateMaze(node.col, node.row, "walls", true);
           }, 10 * i);
 					
-
-					
         }
       }
     }
   }
+
   function visualizeDFSGen() {
 		resetMaze()
     const visitedNodesInOrder = dfsGen(maze);
@@ -87,7 +88,36 @@ export default function Maze() {
 		const visitedNodesInOrder = prim(maze);
 		animatePrim(visitedNodesInOrder);
 	}
-  function animateShortestPathDij(nodesInShortestPath) {
+
+
+	function animateDfsSolve(visitedNodesInOrder){
+		const len = visitedNodesInOrder.length;
+		console.log(visitedNodesInOrder);
+		for (let i = 0; i < len; i++) {
+			if (visitedNodesInOrder[i] === false){
+				continue;
+			}
+			const node = visitedNodesInOrder[i];
+
+			setTimeout(() => {
+				updateMaze(node.col, node.row, "walls", false);
+				updateMaze(node.col, node.row, "sp", true);
+			}, 10 * i);
+
+			if ( (i < len - 1) && (visitedNodesInOrder[i+1] === false)){
+				setTimeout(() => {
+					updateMaze(node.col, node.row, "sp", false);
+					updateMaze(node.col, node.row, "checked", true);
+				}, 10 * i);
+			}
+		}
+	}
+	function visualizeDfsSolve(){
+		resetMaze();
+    const visitedNodesInOrder = dfsSolve(maze);
+    animateDfsSolve(visitedNodesInOrder);
+	}
+	function animateShortestPathDij(nodesInShortestPath) {
     for (let i = 0; i < nodesInShortestPath.length; i++) {
       setTimeout(() => {
         const node = nodesInShortestPath[i];
@@ -96,7 +126,6 @@ export default function Maze() {
       }, 50 * i);
     }
   }
-
   function animateDijkstra(visitedNodesInOrder) {
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
       setTimeout(() => {
@@ -178,6 +207,14 @@ export default function Maze() {
 
         <div className="maze-solve-div">
           <p className="maze-button-header">Solve</p>
+					<button
+            className="maze-button"
+            onClick={() => {
+              visualizeDfsSolve();
+            }}
+          >
+            DFS
+          </button>
           <button
             className="maze-button"
             onClick={() => {
