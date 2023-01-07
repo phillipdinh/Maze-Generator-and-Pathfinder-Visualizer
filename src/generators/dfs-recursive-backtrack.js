@@ -1,4 +1,4 @@
-import { getNeighbors, getRand, checkNeighbors } from "../components/Maze/Maze";
+import { getNeighbors, getRand, checkNeighbors, getAllNodes } from "../components/Maze/Maze-Helper";
 
 export default function dfsGen(grid) {
   function backTrack(col, row, maze) {
@@ -41,16 +41,4 @@ export default function dfsGen(grid) {
   backTrack(0, 0, maze);
 
   return visitedNodesInOrder;
-}
-
-function getAllNodes(maze) {
-  const nodes = [];
-  for (let x = 0; x < 16; x++) {
-    const currRow = [];
-    for (let y = 0; y < 16; y++) {
-      currRow.push(maze[x][y]);
-    }
-    nodes.push(currRow);
-  }
-  return nodes;
 }

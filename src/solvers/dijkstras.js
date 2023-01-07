@@ -1,4 +1,4 @@
-import { getNeighbors } from "../components/Maze/Maze";
+import { getNeighbors } from "../components/Maze/Maze-Helper";
 export default function dijkstra(maze) {
   // Returns object with keys of neighbors and boolean values
 
