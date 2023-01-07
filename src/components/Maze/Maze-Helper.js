@@ -33,6 +33,23 @@ export function checkNeighbors(col, row, neighbors, maze) {
     return false;
   });
 }
+export function checkNeighborsSolve(col, row, neighbors, maze) {
+  return Object.keys(neighbors).filter((direction) => {
+    const [c, r] = neighbors[direction];
+
+    // If no neighbor return false
+    if (c === -1 || r === -1) return false;
+    // If neighbor has not been visited return good neighbor
+		if (maze[col][row][direction] == false) return false;
+		
+    else if (!maze[c][r].visited) {
+      const goodNeighbor = maze[c][r];
+      return goodNeighbor;
+    }
+    return false;
+  });
+}
+
 export function getRand(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
