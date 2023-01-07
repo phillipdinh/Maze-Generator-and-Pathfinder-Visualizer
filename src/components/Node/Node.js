@@ -1,5 +1,7 @@
 import React from "react";
 import "./Node.css";
+import classnames from "classnames";
+
 export default function Node(props) {
   const styles = {
     borderTopWidth: props.top ? 0 : "2px",
@@ -14,11 +16,22 @@ export default function Node(props) {
   };
 
   const [id] = React.useState(`node-${props.col}-${props.row}`);
+  /*
   const startOrFinish =
     props.col === 0 && props.row === 0
       ? "start"
       : props.col === 15 && props.row === 15
       ? "finish"
       : "";
-  return <div id={id} className={`node ${startOrFinish}`} style={styles}></div>;
+*/
+
+  const classNames = classnames({
+    'node': true,
+    'start': props.col === 0 && props.row === 0 ? true : false,
+    'finish': props.col === 15 && props.row === 15 ? true : false,
+		'node-walls': props.walls,
+		'node-shortest-path': props.sp,
+		'node-checked': props.checked,
+  });
+  return <div id={id} className={classNames} style={styles}></div>;
 }
