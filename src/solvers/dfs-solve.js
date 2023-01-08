@@ -43,6 +43,5 @@ export default function dfsSolve(grid) {
   var visitedCount = 0;
 
   backTrack(0, 0, maze);
-
   return visitedNodesInOrder;
 }
