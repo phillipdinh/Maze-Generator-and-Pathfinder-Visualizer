@@ -1,102 +1,117 @@
 import React from "react";
-import { getNeighbors} from "./Maze-Helper";
+import { getNeighbors, ifStartFinish} from "./Maze-Helper";
 
 import Node from "../Node/Node";
 import dijkstra, { getNodesInShortestPathOrder } from "../../solvers/dijkstras";
 import dfsSolve from "../../solvers/dfs-solve";
 
 import dfsGen from "../../generators/dfs-gen";
-import prim from "../../generators/prim";
+import divGen from "../../generators/div-gen";
+import primGen from "../../generators/prim-gen";
 import "./Maze.css";
 
 /*TODO:
 	Add all my other algorithms
 	Clear maze everytime a button is clicked
+	Better reset maze name
+	Change Animations
+	Add overlay
+	Add step counter
+	Add Clear maze button
 */
 export default function Maze() {
-  function animateDFSGen(visitedNodesInOrder) {
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      // If a direction
-      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
-        const node = visitedNodesInOrder[i];
-        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
-          const direction = visitedNodesInOrder[i + 1];
-          const oppDirection = oppDir[direction];
-          const neighbors = getNeighbors(node.col, node.row);
-          const nextNode = neighbors[direction];
 
-          setTimeout(() => {
-            updateMaze(node.col, node.row, direction, true);
-            updateMaze(nextNode[0], nextNode[1], oppDirection, true);
-          }, 10 * i);
-        }
-
-        if (
-          (node.col === 0 && node.row === 0) ||
-          (node.col === 15 && node.row === 15)
-        ) {
-          continue;
-        } else {
-          setTimeout(() => {
-						updateMaze(node.col, node.row, "walls", true);
-          }, 10 * i);
-					
-        }
-      }
-    }
-  }
-
-  function visualizeDFSGen() {
-		resetMaze()
-    const visitedNodesInOrder = dfsGen(maze);
-    animateDFSGen(visitedNodesInOrder);
-  }
-
-	function animatePrim(visitedNodesInOrder) {
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      // If a direction
-      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
-        const node = visitedNodesInOrder[i];
-        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
-          const direction = visitedNodesInOrder[i + 1];
-          const oppDirection = oppDir[direction];
-          const neighbors = getNeighbors(node.col, node.row);
-          const nextNode = neighbors[direction];
-
-          setTimeout(() => {
-            updateMaze(node.col, node.row, direction, true);
-            updateMaze(nextNode[0], nextNode[1], oppDirection, true);
-          }, 10 * i);
-        }
-
-        if (
-          (node.col === 0 && node.row === 0) ||
-          (node.col === 15 && node.row === 15)
-        ) {
-          continue;
-        } else {
-          setTimeout(() => {
-						updateMaze(node.col, node.row, "walls", true);
-          }, 10 * i);
-        }
-      }
-    }
-  }
-
-	function visualizePrim(){
+  function visualizeDfsGen() {
 		resetMaze();
-		const visitedNodesInOrder = prim(maze);
-		animatePrim(visitedNodesInOrder);
+    const visitedNodesInOrder = dfsGen(maze);
+
+		for (let i = 0; i < visitedNodesInOrder.length; i++) {
+			// If a direction
+			if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
+				const node = visitedNodesInOrder[i];
+
+				if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
+					const direction = visitedNodesInOrder[i + 1];
+
+					setTimeout(() => {
+						updateMaze(node.col, node.row, direction, true);
+					}, 1 * i);
+				}
+
+				if (!ifStartFinish(node.col, node.row)){
+					setTimeout(() => {
+						updateMaze(node.col, node.row, "walls", true);
+					}, 1 * i);
+				}
+			}
+		}
+		
+  }
+
+	function visualizeDivGen(){
+		resetMaze();
+		delWalls();
+
+		const visitedNodesInOrder = divGen(maze);
+		
+		for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      // If a direction
+      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
+        const node = visitedNodesInOrder[i];
+
+        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
+          const direction = visitedNodesInOrder[i + 1];
+
+          setTimeout(() => {
+            updateMaze(node.col, node.row, direction, false);
+          }, 10 * i);
+        }
+
+				if (!ifStartFinish(node.col, node.row)){
+          setTimeout(() => {
+						updateMaze(node.col, node.row, "walls", true);
+          }, 10 * i);
+        }
+      }
+    }
+
+	};
+
+	
+	function visualizePrimGen(){
+		resetMaze();
+		const visitedNodesInOrder = primGen(maze);
+
+		for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      // If a direction
+      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
+        const node = visitedNodesInOrder[i];
+				
+        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
+          const direction = visitedNodesInOrder[i + 1];
+
+          setTimeout(() => {
+            updateMaze(node.col, node.row, direction, true);
+          }, 10 * i);
+        }
+        if (!ifStartFinish(node.col, node.row)){
+          setTimeout(() => {
+						updateMaze(node.col, node.row, "walls", true);
+          }, 10 * i);
+        }
+      }
+    }
 	}
 
+	function visualizeDfsSolve(){
+		resetMaze();
+    const visitedNodesInOrder = dfsSolve(maze);
 
-	function animateDfsSolve(visitedNodesInOrder){
 		const len = visitedNodesInOrder.length;
-		console.log(visitedNodesInOrder);
-		for (let i = 0; i < len; i++) {
-			if (visitedNodesInOrder[i] === false){
-				continue;
-			}
+		// Skip first node
+		for (let i = 1; i < len; i++) {
+			if (visitedNodesInOrder[i] === false) continue;
+
 			const node = visitedNodesInOrder[i];
 
 			setTimeout(() => {
@@ -112,44 +127,42 @@ export default function Maze() {
 			}
 		}
 	}
-	function visualizeDfsSolve(){
-		resetMaze();
-    const visitedNodesInOrder = dfsSolve(maze);
-    animateDfsSolve(visitedNodesInOrder);
-	}
+
 	function animateShortestPathDij(nodesInShortestPath) {
     for (let i = 0; i < nodesInShortestPath.length; i++) {
-      setTimeout(() => {
-        const node = nodesInShortestPath[i];
-				updateMaze(node.col, node.row, "walls", false);
-				updateMaze(node.col, node.row, "sp", true);
-      }, 50 * i);
+			const node = nodesInShortestPath[i];
+			if (!ifStartFinish(node.col, node.row)) {
+				setTimeout(() => {
+					updateMaze(node.col, node.row, "walls", false);
+					updateMaze(node.col, node.row, "sp", true);
+				}, 50 * i);
+			}
     }
   }
-  function animateDijkstra(visitedNodesInOrder) {
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-				updateMaze(node.col, node.row, "walls", false);
-				updateMaze(node.col, node.row, "checked", true);
-      }, 10 * i);
-
-      if (i === visitedNodesInOrder.length - 1) {
-        const lastNode = maze[15][15];
-        const nodesInShortestPath = getNodesInShortestPathOrder(lastNode);
-        if (i === visitedNodesInOrder.length - 1) {
-          setTimeout(() => {
-            animateShortestPathDij(nodesInShortestPath);
-          }, 10 * i);
-        }
-      }
-    }
-  }
-
+	
   function visualizeDijkstras() {
     resetMaze();
     const visitedNodesInOrder = dijkstra(maze);
-    animateDijkstra(visitedNodesInOrder);
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+			
+			if (i === visitedNodesInOrder.length - 1) {
+        const lastNode = maze[15][15];
+        const nodesInShortestPath = getNodesInShortestPathOrder(lastNode);
+
+				setTimeout(() => {
+					animateShortestPathDij(nodesInShortestPath);
+				}, 10 * i);
+      }
+
+			const node = visitedNodesInOrder[i];
+
+			if (ifStartFinish(node.col, node.row)) continue;
+
+      setTimeout(() => {
+				updateMaze(node.col, node.row, "walls", false);
+				updateMaze(node.col, node.row, "checked", true);
+      }, 10 * i); 
+    }
   }
 
   function updateMaze(col, row, prop, update) {
@@ -158,10 +171,31 @@ export default function Maze() {
     setMaze(copyMaze);
   }
 
-  function resetMaze() {
-    // eslint-disable-next-line array-callback-return
+	function delWalls() {
     maze.map((row, rowIdx) => {
-      // eslint-disable-next-line array-callback-return
+      row.map((node, colIdx) => {
+        updateMaze(colIdx, rowIdx, "left", true);
+        updateMaze(colIdx, rowIdx, "right", true);
+        updateMaze(colIdx, rowIdx, "top", true);
+        updateMaze(colIdx, rowIdx, "bottom", true);
+				
+				// Put Border Back
+        if (rowIdx == 0) {
+          updateMaze(colIdx, rowIdx, "top", false);
+        } else if (rowIdx == 15) {
+          updateMaze(colIdx, rowIdx, "bottom", false);
+        }
+        if (colIdx == 0) {
+          updateMaze(colIdx, rowIdx, "left", false);
+        } else if (colIdx == 15) {
+          updateMaze(colIdx, rowIdx, "right", false);
+        }
+      });
+    });
+  }
+
+  function resetMaze() {
+    maze.map((row, rowIdx) => {
       row.map((node, colIdx) => {
         updateMaze(colIdx, rowIdx, "visited", false);
       });
@@ -187,21 +221,22 @@ export default function Maze() {
       <div className="maze-button-div">
         <div className="maze-generate-div">
           <p className="maze-button-header">Generate</p>
-          <button
-            className="maze-button"
-            onClick={() => {
-              visualizeDFSGen();
-            }}
-          >
+          <button 
+						className="maze-button" 
+						onClick={() => {visualizeDfsGen();}}>
             DFS
           </button>
+
+					<button 
+						className="maze-button"
+            onClick={() => {visualizePrimGen();}}>
+            Prim
+          </button>
+
 					<button
             className="maze-button"
-            onClick={() => {
-              visualizePrim();
-            }}
-          >
-            Prim
+            onClick={() => {visualizeDivGen();}}>
+            DIV
           </button>
         </div>
 
@@ -209,18 +244,13 @@ export default function Maze() {
           <p className="maze-button-header">Solve</p>
 					<button
             className="maze-button"
-            onClick={() => {
-              visualizeDfsSolve();
-            }}
-          >
+            onClick={() => {visualizeDfsSolve();}}>
             DFS
           </button>
+
           <button
             className="maze-button"
-            onClick={() => {
-              visualizeDijkstras();
-            }}
-          >
+            onClick={() => {visualizeDijkstras();}}>
             DIJ
           </button>
         </div>
