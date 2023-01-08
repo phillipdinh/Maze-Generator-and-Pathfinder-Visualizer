@@ -40,7 +40,7 @@ export function checkNeighborsSolve(col, row, neighbors, maze) {
     // If no neighbor return false
     if (c === -1 || r === -1) return false;
     // If neighbor has not been visited return good neighbor
-		if (maze[col][row][direction] == false) return false;
+		if (maze[col][row][direction] === false) return false;
 		
     else if (!maze[c][r].visited) {
       const goodNeighbor = maze[c][r];
@@ -52,4 +52,29 @@ export function checkNeighborsSolve(col, row, neighbors, maze) {
 
 export function getRand(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+
+export function getOppDir(dir){
+	if (dir === "top"){
+		return "bottom"
+	}
+	else if (dir === "bottom"){
+		return "top"
+	}
+	else if (dir === "left"){
+		return "right"
+	}
+	else if (dir === "right"){
+		return "left"
+	}
+}
+
+export function ifStartFinish (col, row){
+	if ((col === 0 && row === 0) || (col === 15 && row === 15)) {
+		return true
+	} 
+	else {
+		return false
+	}
 }
