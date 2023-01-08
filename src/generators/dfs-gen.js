@@ -1,4 +1,4 @@
-import { getNeighbors, getRand, checkNeighbors, getAllNodes } from "../components/Maze/Maze-Helper";
+import { getNeighbors, getRand, checkNeighbors, getAllNodes, getOppDir } from "../components/Maze/Maze-Helper";
 
 export default function dfsGen(grid) {
   function backTrack(col, row, maze) {
@@ -20,6 +20,13 @@ export default function dfsGen(grid) {
         //Wall
         //updateMaze(col, row, randDir, true);
         visitedNodesInOrder.push(randDir);
+
+				//const oppD = getOppDir(randDir);
+				//const neighbors = getNeighbors(node.col, node.row);
+				//const nextNode = neighbors[direction];
+
+				visitedNodesInOrder.push(maze[nCol][nRow]);
+				visitedNodesInOrder.push(getOppDir(randDir));
 
         // random neighbor
         return backTrack(nCol, nRow, maze);
