@@ -1,17 +1,19 @@
 import React from "react";
-import { getNeighbors, ifStartFinish} from "./Maze-Helper";
 
+import { getNeighbors, ifStartFinish} from "./Maze-Helper";
 import Node from "../Node/Node";
+
 import dijkstra, { getNodesInShortestPathOrder } from "../../solvers/dijkstras";
 import dfsSolve from "../../solvers/dfs-solve";
 
 import dfsGen from "../../generators/dfs-gen";
 import divGen from "../../generators/div-gen";
 import primGen from "../../generators/prim-gen";
+
 import "./Maze.css";
 
 /*TODO:
-	Add all my other algorithms
+	Add one more algorithm
 	Clear maze everytime a button is clicked
 	Better reset maze name
 	Change Animations
@@ -21,10 +23,7 @@ import "./Maze.css";
 */
 export default function Maze() {
 
-  function visualizeDfsGen() {
-		resetMaze();
-    const visitedNodesInOrder = dfsGen(maze);
-
+	function animateMazeGen(visitedNodesInOrder, flag){
 		for (let i = 0; i < visitedNodesInOrder.length; i++) {
 			// If a direction
 			if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
@@ -34,73 +33,37 @@ export default function Maze() {
 					const direction = visitedNodesInOrder[i + 1];
 
 					setTimeout(() => {
-						updateMaze(node.col, node.row, direction, true);
+						updateMaze(node.col, node.row, direction, flag);
 					}, 1 * i);
 				}
 
 				if (!ifStartFinish(node.col, node.row)){
-					setTimeout(() => {
+					setTimeout(() => { 
 						updateMaze(node.col, node.row, "walls", true);
 					}, 1 * i);
 				}
 			}
 		}
-		
+	}
+
+  function visualizeDfsGen() {
+		resetMaze();
+    const visitedNodesInOrder = dfsGen(maze);
+		animateMazeGen(visitedNodesInOrder, true)
   }
 
 	function visualizeDivGen(){
 		resetMaze();
 		delWalls();
-
 		const visitedNodesInOrder = divGen(maze);
-		
-		for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      // If a direction
-      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
-        const node = visitedNodesInOrder[i];
-
-        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
-          const direction = visitedNodesInOrder[i + 1];
-
-          setTimeout(() => {
-            updateMaze(node.col, node.row, direction, false);
-          }, 10 * i);
-        }
-
-				if (!ifStartFinish(node.col, node.row)){
-          setTimeout(() => {
-						updateMaze(node.col, node.row, "walls", true);
-          }, 10 * i);
-        }
-      }
-    }
-
+		animateMazeGen(visitedNodesInOrder, false)
 	};
 
 	
 	function visualizePrimGen(){
 		resetMaze();
 		const visitedNodesInOrder = primGen(maze);
-
-		for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      // If a direction
-      if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
-        const node = visitedNodesInOrder[i];
-				
-        if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
-          const direction = visitedNodesInOrder[i + 1];
-
-          setTimeout(() => {
-            updateMaze(node.col, node.row, direction, true);
-          }, 10 * i);
-        }
-        if (!ifStartFinish(node.col, node.row)){
-          setTimeout(() => {
-						updateMaze(node.col, node.row, "walls", true);
-          }, 10 * i);
-        }
-      }
-    }
+		animateMazeGen(visitedNodesInOrder, true)
 	}
 
 	function visualizeDfsSolve(){
@@ -111,30 +74,29 @@ export default function Maze() {
 		// Skip first node
 		for (let i = 1; i < len; i++) {
 			if (visitedNodesInOrder[i] === false) continue;
-
 			const node = visitedNodesInOrder[i];
 
 			setTimeout(() => {
-				updateMaze(node.col, node.row, "walls", false);
-				updateMaze(node.col, node.row, "sp", true);
+				setShortestPath(node.col, node.row)
 			}, 10 * i);
 
 			if ( (i < len - 1) && (visitedNodesInOrder[i+1] === false)){
 				setTimeout(() => {
-					updateMaze(node.col, node.row, "sp", false);
-					updateMaze(node.col, node.row, "checked", true);
+					setChecked(node.col, node.row);
 				}, 10 * i);
 			}
 		}
 	}
 
-	function animateShortestPathDij(nodesInShortestPath) {
+	function animateShortestPathDij() {
+		const nodesInShortestPath = getNodesInShortestPathOrder(maze[15][15]);
+
     for (let i = 0; i < nodesInShortestPath.length; i++) {
 			const node = nodesInShortestPath[i];
+
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
-					updateMaze(node.col, node.row, "walls", false);
-					updateMaze(node.col, node.row, "sp", true);
+					setShortestPath(node.col, node.row)
 				}, 50 * i);
 			}
     }
@@ -143,25 +105,20 @@ export default function Maze() {
   function visualizeDijkstras() {
     resetMaze();
     const visitedNodesInOrder = dijkstra(maze);
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-			
-			if (i === visitedNodesInOrder.length - 1) {
-        const lastNode = maze[15][15];
-        const nodesInShortestPath = getNodesInShortestPathOrder(lastNode);
 
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+			if (i === visitedNodesInOrder.length - 1) {
 				setTimeout(() => {
-					animateShortestPathDij(nodesInShortestPath);
+					animateShortestPathDij();
 				}, 10 * i);
       }
 
 			const node = visitedNodesInOrder[i];
-
-			if (ifStartFinish(node.col, node.row)) continue;
-
-      setTimeout(() => {
-				updateMaze(node.col, node.row, "walls", false);
-				updateMaze(node.col, node.row, "checked", true);
-      }, 10 * i); 
+			if (!ifStartFinish(node.col, node.row)){
+				setTimeout(() => {
+					setChecked(node.col, node.row);
+				}, 10 * i); 
+			}
     }
   }
 
@@ -171,33 +128,44 @@ export default function Maze() {
     setMaze(copyMaze);
   }
 
+	function setChecked(col, row){
+		updateMaze(col, row, "sp", false);
+		updateMaze(col, row, "walls", false);
+		updateMaze(col, row, "checked", true);
+	}
+
+	function setShortestPath(col, row){
+		updateMaze(col, row, "walls", false);
+		updateMaze(col, row, "sp", false);
+	}
+
 	function delWalls() {
-    maze.map((row, rowIdx) => {
-      row.map((node, colIdx) => {
-        updateMaze(colIdx, rowIdx, "left", true);
-        updateMaze(colIdx, rowIdx, "right", true);
-        updateMaze(colIdx, rowIdx, "top", true);
-        updateMaze(colIdx, rowIdx, "bottom", true);
+    maze.map((row, r) => {
+      row.map((node, c) => {
+        updateMaze(c, r, "left", true);
+        updateMaze(c, r, "right", true);
+        updateMaze(c, r, "top", true);
+        updateMaze(c, r, "bottom", true);
 				
 				// Put Border Back
-        if (rowIdx == 0) {
-          updateMaze(colIdx, rowIdx, "top", false);
-        } else if (rowIdx == 15) {
-          updateMaze(colIdx, rowIdx, "bottom", false);
+        if (r == 0) {
+          updateMaze(c, r, "top", false);
+        } else if (r == 15) {
+          updateMaze(c, r, "bottom", false);
         }
-        if (colIdx == 0) {
-          updateMaze(colIdx, rowIdx, "left", false);
-        } else if (colIdx == 15) {
-          updateMaze(colIdx, rowIdx, "right", false);
+        if (c == 0) {
+          updateMaze(c, r, "left", false);
+        } else if (c == 15) {
+          updateMaze(c, r, "right", false);
         }
       });
     });
   }
 
   function resetMaze() {
-    maze.map((row, rowIdx) => {
-      row.map((node, colIdx) => {
-        updateMaze(colIdx, rowIdx, "visited", false);
+    maze.map((row, r) => {
+      row.map((node, c) => {
+        updateMaze(c, r, "visited", false);
       });
     });
   }
