@@ -70,8 +70,8 @@ export function getOppDir(dir){
 	}
 }
 
-export function ifStartFinish (col, row){
-	if ((col === 0 && row === 0) || (col === 15 && row === 15)) {
+export function ifStartFinish (startCol, startRow, col, row){
+	if ((col === startCol && row === startRow) || (col === 15 && row === 15)) {
 		return true
 	} 
 	else {
