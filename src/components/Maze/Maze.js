@@ -1,9 +1,9 @@
 import React from "react";
 
-import { getNeighbors, ifStartFinish} from "./Maze-Helper";
+import {ifStartFinish} from "./Maze-Helper";
 import Node from "../Node/Node";
 
-import dijkstra, { getNodesInShortestPathOrder } from "../../solvers/dijkstras";
+import dijkstra, { getShortestPath } from "../../solvers/dijkstras";
 import dfsSolve from "../../solvers/dfs-solve";
 
 import dfsGen from "../../generators/dfs-gen";
@@ -14,16 +14,19 @@ import "./Maze.css";
 
 /*TODO:
 	Add one more algorithm
-	Clear maze everytime a button is clicked
-	Better reset maze name
-	Change Animations
-	Add overlay
 	Add step counter
-	Add Clear maze button
+	Disable solve buttons if maze not generated
+
 */
+const FINISH_COL = 15;
+const FINISH_ROW = 15;
+const DELAY_GEN = 1;
+const DELAY_SOLVE = 20;
+
 export default function Maze() {
 
 	function animateMazeGen(visitedNodesInOrder, flag){
+		setLoadingState(true);
 		for (let i = 0; i < visitedNodesInOrder.length; i++) {
 			// If a direction
 			if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
@@ -34,21 +37,26 @@ export default function Maze() {
 
 					setTimeout(() => {
 						updateMaze(node.col, node.row, direction, flag);
-					}, 1 * i);
+					}, DELAY_GEN * i);
 				}
 
-				if (!ifStartFinish(node.col, node.row)){
+				if (!ifStartFinish(startCol.current, startRow.current, node.col, node.row)){
 					setTimeout(() => { 
-						updateMaze(node.col, node.row, "walls", true);
-					}, 1 * i);
+						updateMaze(node.col, node.row, "active", true);
+					}, DELAY_GEN * i);
 				}
 			}
 		}
+		resetVisited(visitedNodesInOrder.length);
 	}
 
   function visualizeDfsGen() {
+		startCol.current = Math.floor(Math.random() * 16)
+		startRow.current = Math.floor(Math.random() * 16)
+
 		resetMaze();
-    const visitedNodesInOrder = dfsGen(maze);
+
+    const visitedNodesInOrder = dfsGen(startCol.current, startRow.current, maze);
 		animateMazeGen(visitedNodesInOrder, true)
   }
 
@@ -61,35 +69,38 @@ export default function Maze() {
 
 	
 	function visualizePrimGen(){
-		resetMaze();
+		resetMaze()
 		const visitedNodesInOrder = primGen(maze);
 		animateMazeGen(visitedNodesInOrder, true)
 	}
 
 	function visualizeDfsSolve(){
-		resetMaze();
+		setLoadingState(true);
+		resetSolve();
+		stepCount.current = 0;
     const visitedNodesInOrder = dfsSolve(maze);
 
 		const len = visitedNodesInOrder.length;
-		// Skip first node
 		for (let i = 1; i < len; i++) {
 			if (visitedNodesInOrder[i] === false) continue;
 			const node = visitedNodesInOrder[i];
 
 			setTimeout(() => {
+				stepCount.current = stepCount.current + 1;
 				setShortestPath(node.col, node.row)
-			}, 10 * i);
+			}, DELAY_SOLVE * i);
 
 			if ( (i < len - 1) && (visitedNodesInOrder[i+1] === false)){
 				setTimeout(() => {
 					setChecked(node.col, node.row);
-				}, 10 * i);
+				}, DELAY_SOLVE * i);
 			}
 		}
+		resetVisited(visitedNodesInOrder.length);
 	}
 
 	function animateShortestPathDij() {
-		const nodesInShortestPath = getNodesInShortestPathOrder(maze[15][15]);
+		const nodesInShortestPath = getShortestPath(maze[FINISH_COL][FINISH_ROW]);
 
     for (let i = 0; i < nodesInShortestPath.length; i++) {
 			const node = nodesInShortestPath[i];
@@ -97,27 +108,32 @@ export default function Maze() {
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
 					setShortestPath(node.col, node.row)
-				}, 50 * i);
+				}, DELAY_SOLVE * i);
 			}
     }
+		resetVisited(nodesInShortestPath.length);
   }
 	
   function visualizeDijkstras() {
-    resetMaze();
+    setLoadingState(true);
+		resetSolve();
+
+		stepCount.current = 0
     const visitedNodesInOrder = dijkstra(maze);
 
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
 			if (i === visitedNodesInOrder.length - 1) {
 				setTimeout(() => {
 					animateShortestPathDij();
-				}, 10 * i);
+				}, DELAY_SOLVE * i);
       }
 
 			const node = visitedNodesInOrder[i];
 			if (!ifStartFinish(node.col, node.row)){
 				setTimeout(() => {
+					stepCount.current = stepCount.current + 1;
 					setChecked(node.col, node.row);
-				}, 10 * i); 
+				}, DELAY_SOLVE * i); 
 			}
     }
   }
@@ -136,39 +152,63 @@ export default function Maze() {
 
 	function setShortestPath(col, row){
 		updateMaze(col, row, "walls", false);
-		updateMaze(col, row, "sp", false);
+		updateMaze(col, row, "sp", true);
 	}
 
 	function delWalls() {
-    maze.map((row, r) => {
-      row.map((node, c) => {
-        updateMaze(c, r, "left", true);
+		for (let c = 0; c < 16; c++) {
+			for (let r = 0; r < 16; r++) {
+				updateMaze(c, r, "left", true);
         updateMaze(c, r, "right", true);
         updateMaze(c, r, "top", true);
         updateMaze(c, r, "bottom", true);
+			
+				if (r === 0) updateMaze(c, r, "top", false);
+				else if (r === 15) updateMaze(c, r, "bottom", false);
 				
-				// Put Border Back
-        if (r == 0) {
-          updateMaze(c, r, "top", false);
-        } else if (r == 15) {
-          updateMaze(c, r, "bottom", false);
-        }
-        if (c == 0) {
-          updateMaze(c, r, "left", false);
-        } else if (c == 15) {
-          updateMaze(c, r, "right", false);
-        }
-      });
-    });
+				if (c === 0) updateMaze(c, r, "left", false);
+				else if (c === 15) updateMaze(c, r, "right", false);
+			}
+		}
   }
 
-  function resetMaze() {
-    maze.map((row, r) => {
-      row.map((node, c) => {
-        updateMaze(c, r, "visited", false);
+	function resetSolve(){
+		for (let c = 0; c < 16; c++) {
+			for (let r = 0; r < 16; r++) {
+				if (!ifStartFinish(c, r)){
+					updateMaze(c, r, "sp", false);
+					updateMaze(c, r, "checked", false);
+					updateMaze(c, r, "active", false);
+				}
+			}
+		}
+	}
+
+  function resetVisited(lengthNodes) {
+		for (let c = 0; c < 16; c++) {
+			for (let r = 0; r < 16; r++) {
+				updateMaze(c, r, "visited", false);
+			}
+		}
+		setTimeout(() => {
+			setLoadingState(false);
+		}, DELAY_GEN * lengthNodes); 
+  }
+
+	function resetMaze(){
+		const newMaze = mazeInit();
+		newMaze.map((col, colIdx) => {
+      col.map((node, rowIdx) => {
+				let copyMaze = [...maze];
+				if (colIdx === startCol.current && rowIdx === startRow.current){
+					newMaze[colIdx][rowIdx].start = true;
+				}
+				copyMaze[colIdx][rowIdx] = newMaze[colIdx][rowIdx];
+				setMaze(copyMaze);
       });
     });
-  }
+		stepCount.current = 0;
+	}
 
   const oppDir = {
     top: "bottom",
@@ -178,6 +218,10 @@ export default function Maze() {
   };
 
   const [maze, setMaze] = React.useState(mazeInit());
+	const [loadingState, setLoadingState] = React.useState(false);
+	const startCol = React.useRef(0);
+	const startRow = React.useRef(0);
+	const stepCount = React.useRef(0);
 
   const styles = {
     display: "inline-grid",
@@ -222,6 +266,7 @@ export default function Maze() {
             DIJ
           </button>
         </div>
+				{loadingState && <div className="loading-overlay"></div>}
       </div>
 
       <div className="maze-div">
@@ -231,34 +276,38 @@ export default function Maze() {
               <div key={rowIdx}>
                 {block.map((node, nodeIdx) => {
                   const {
+										start,
                     col,
                     row,
                     top,
                     bottom,
                     left,
                     right,
-										walls,
+										active,
                     visited,
                     distance,
                     previousNode,
 										sp,
 										checked,
+										curr,
                   } = node;
                   return (
                     <Node
                       key={nodeIdx}
+											start={start}
                       col={col}
                       row={row}
                       top={top}
                       bottom={bottom}
                       left={left}
                       right={right}
-											walls={walls}
+											active={active}
                       visited={visited}
                       distance={distance}
                       previousNode={previousNode}
 											sp={sp}
 											checked={checked}
+											curr={curr}
                     ></Node>
                   );
                 })}
@@ -266,13 +315,23 @@ export default function Maze() {
             );
           })}
         </div>
+
+				<button className="clear-maze-button" onClick={() => resetMaze()}>
+          Clear Maze
+        </button>
+
+				<div className="step-count">
+          Steps:
+          <p className="step-text"> {stepCount.current}</p>
+        </div>
       </div>
     </div>
   );
 }
 
-const createNode = (row, col) => {
+const createNode = (col, row) => {
   return {
+		start: false,
     col,
     row,
     top: false,
@@ -285,17 +344,18 @@ const createNode = (row, col) => {
     previousNode: null,
 		sp: false,
 		checked: false,
+		curr: false,
   };
 };
 
 const mazeInit = () => {
   const grid = [];
-  for (let x = 0; x < 16; x++) {
-    const currRow = [];
-    for (let y = 0; y < 16; y++) {
-      currRow.push(createNode(y, x));
+  for (let c = 0; c < 16; c++) {
+    const currCol = [];
+    for (let r = 0; r < 16; r++) {
+      currCol.push(createNode(c, r));
     }
-    grid.push(currRow);
+    grid.push(currCol);
   }
   return grid;
 };
