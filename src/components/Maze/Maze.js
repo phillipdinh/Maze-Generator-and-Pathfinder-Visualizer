@@ -1,6 +1,4 @@
 import React from "react";
-
-import {ifStartFinish} from "./Maze-Helper";
 import Node from "../Node/Node";
 
 import dijkstra, { getShortestPath } from "../../solvers/dijkstras";
@@ -14,93 +12,87 @@ import "./Maze.css";
 
 /*TODO:
 	Add one more algorithm
-	Add step counter
-	Disable solve buttons if maze not generated
+	Make Animation Prettier
+	Change UI
 
 */
-const FINISH_COL = 15;
-const FINISH_ROW = 15;
 const DELAY_GEN = 1;
-const DELAY_SOLVE = 20;
+const DELAY_SOLVE = 10;
 
 export default function Maze() {
 
-	function animateMazeGen(visitedNodesInOrder, flag){
-		setLoadingState(true);
-		for (let i = 0; i < visitedNodesInOrder.length; i++) {
+	function animateMazeGen(visitedNodes, flag){
+		for (let i = 0; i < visitedNodes.length; i++) {
 			// If a direction
-			if (!oppDir.hasOwnProperty(visitedNodesInOrder[i])) {
-				const node = visitedNodesInOrder[i];
+			if (!oppDir.hasOwnProperty(visitedNodes[i])) {
+				const node = visitedNodes[i];
 
-				if (oppDir.hasOwnProperty(visitedNodesInOrder[i + 1])) {
-					const direction = visitedNodesInOrder[i + 1];
+				if (oppDir.hasOwnProperty(visitedNodes[i + 1])) {
+					const direction = visitedNodes[i + 1];
 
 					setTimeout(() => {
 						updateMaze(node.col, node.row, direction, flag);
 					}, DELAY_GEN * i);
 				}
 
-				if (!ifStartFinish(startCol.current, startRow.current, node.col, node.row)){
+				if (!ifStartFinish(node.col, node.row)){
 					setTimeout(() => { 
 						updateMaze(node.col, node.row, "active", true);
 					}, DELAY_GEN * i);
 				}
 			}
 		}
-		resetVisited(visitedNodesInOrder.length);
+		resetVisited(DELAY_GEN, visitedNodes.length);
 	}
 
   function visualizeDfsGen() {
-		startCol.current = Math.floor(Math.random() * 16)
-		startRow.current = Math.floor(Math.random() * 16)
-
 		resetMaze();
+    const visitedNodes = dfsGen(startCol.current, startRow.current, maze);
 
-    const visitedNodesInOrder = dfsGen(startCol.current, startRow.current, maze);
-		animateMazeGen(visitedNodesInOrder, true)
+		animateMazeGen(visitedNodes, true)
   }
 
 	function visualizeDivGen(){
 		resetMaze();
 		delWalls();
-		const visitedNodesInOrder = divGen(maze);
-		animateMazeGen(visitedNodesInOrder, false)
+
+		const visitedNodes = divGen(maze);
+		animateMazeGen(visitedNodes, false)
 	};
 
 	
 	function visualizePrimGen(){
 		resetMaze()
-		const visitedNodesInOrder = primGen(maze);
-		animateMazeGen(visitedNodesInOrder, true)
+		const visitedNodes = primGen(startCol.current, startRow.current, maze);
+		animateMazeGen(visitedNodes, true)
 	}
 
 	function visualizeDfsSolve(){
-		setLoadingState(true);
 		resetSolve();
-		stepCount.current = 0;
-    const visitedNodesInOrder = dfsSolve(maze);
+    const visitedNodes = dfsSolve(startCol.current, startRow.current, 
+																	finishCol.current, finishRow.current, maze);
 
-		const len = visitedNodesInOrder.length;
+		const len = visitedNodes.length;
 		for (let i = 1; i < len; i++) {
-			if (visitedNodesInOrder[i] === false) continue;
-			const node = visitedNodesInOrder[i];
+			if (visitedNodes[i] === false) continue;
+			const node = visitedNodes[i];
 
 			setTimeout(() => {
 				stepCount.current = stepCount.current + 1;
 				setShortestPath(node.col, node.row)
 			}, DELAY_SOLVE * i);
 
-			if ( (i < len - 1) && (visitedNodesInOrder[i+1] === false)){
+			if ( (i < len - 1) && (visitedNodes[i+1] === false)){
 				setTimeout(() => {
 					setChecked(node.col, node.row);
 				}, DELAY_SOLVE * i);
 			}
 		}
-		resetVisited(visitedNodesInOrder.length);
+		resetVisited(DELAY_SOLVE, visitedNodes.length);
 	}
 
 	function animateShortestPathDij() {
-		const nodesInShortestPath = getShortestPath(maze[FINISH_COL][FINISH_ROW]);
+		const nodesInShortestPath = getShortestPath(maze[finishCol.current][finishRow.current]);
 
     for (let i = 0; i < nodesInShortestPath.length; i++) {
 			const node = nodesInShortestPath[i];
@@ -111,24 +103,23 @@ export default function Maze() {
 				}, DELAY_SOLVE * i);
 			}
     }
-		resetVisited(nodesInShortestPath.length);
+		resetVisited(DELAY_SOLVE, nodesInShortestPath.length);
   }
 	
   function visualizeDijkstras() {
-    setLoadingState(true);
 		resetSolve();
 
-		stepCount.current = 0
-    const visitedNodesInOrder = dijkstra(maze);
+    const visitedNodes = dijkstra(startCol.current, startRow.current, 
+																	finishCol.current, finishRow.current, maze);
 
-    for (let i = 0; i < visitedNodesInOrder.length; i++) {
-			if (i === visitedNodesInOrder.length - 1) {
+    for (let i = 0; i < visitedNodes.length; i++) {
+			if (i === visitedNodes.length - 1) {
 				setTimeout(() => {
 					animateShortestPathDij();
 				}, DELAY_SOLVE * i);
       }
 
-			const node = visitedNodesInOrder[i];
+			const node = visitedNodes[i];
 			if (!ifStartFinish(node.col, node.row)){
 				setTimeout(() => {
 					stepCount.current = stepCount.current + 1;
@@ -173,6 +164,9 @@ export default function Maze() {
   }
 
 	function resetSolve(){
+		setLoadingState(true);
+		stepCount.current = 0
+
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
 				if (!ifStartFinish(c, r)){
@@ -184,7 +178,7 @@ export default function Maze() {
 		}
 	}
 
-  function resetVisited(lengthNodes) {
+  function resetVisited(delay, lengthNodes) {
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
 				updateMaze(c, r, "visited", false);
@@ -192,22 +186,49 @@ export default function Maze() {
 		}
 		setTimeout(() => {
 			setLoadingState(false);
-		}, DELAY_GEN * lengthNodes); 
+		}, delay * lengthNodes); 
   }
 
+	function getRandStartFinish(){
+		startCol.current = Math.floor(Math.random() * 16);
+		startRow.current = Math.floor(Math.random() * 16);
+		finishCol.current = Math.floor(Math.random() * 16);
+		finishRow.current = Math.floor(Math.random() * 16);
+
+		// Make sure start and finish are more than 2 nodes aways
+		if (Math.abs(startCol.current - finishCol.current) < 2 ||
+				Math.abs(startRow.current - finishRow.current) < 2) {
+					getRandStartFinish();
+				}
+	}
+
+	function ifStartFinish (col, row){
+		if ((col === startCol.current && row === startRow.current) || 
+				(col === finishCol.current && row === finishRow.current)) {
+			return true
+		} 
+		else {
+			return false
+		}
+	}
+
 	function resetMaze(){
+		setLoadingState(true);
+		getRandStartFinish()
+		stepCount.current = 0;
+
 		const newMaze = mazeInit();
 		newMaze.map((col, colIdx) => {
       col.map((node, rowIdx) => {
 				let copyMaze = [...maze];
-				if (colIdx === startCol.current && rowIdx === startRow.current){
-					newMaze[colIdx][rowIdx].start = true;
-				}
 				copyMaze[colIdx][rowIdx] = newMaze[colIdx][rowIdx];
 				setMaze(copyMaze);
       });
     });
-		stepCount.current = 0;
+
+		updateMaze(startCol.current, startRow.current, "start", true);
+		updateMaze(finishCol.current, finishRow.current, "finish", true);
+
 	}
 
   const oppDir = {
@@ -221,6 +242,8 @@ export default function Maze() {
 	const [loadingState, setLoadingState] = React.useState(false);
 	const startCol = React.useRef(0);
 	const startRow = React.useRef(0);
+	const finishCol = React.useRef(0);
+	const finishRow = React.useRef(0);
 	const stepCount = React.useRef(0);
 
   const styles = {
@@ -277,6 +300,7 @@ export default function Maze() {
                 {block.map((node, nodeIdx) => {
                   const {
 										start,
+										finish,
                     col,
                     row,
                     top,
@@ -295,6 +319,7 @@ export default function Maze() {
                     <Node
                       key={nodeIdx}
 											start={start}
+											finish={finish}
                       col={col}
                       row={row}
                       top={top}
@@ -316,7 +341,8 @@ export default function Maze() {
           })}
         </div>
 
-				<button className="clear-maze-button" onClick={() => resetMaze()}>
+				<button className="clear-maze-button" onClick={() => {resetMaze(); 
+																															setLoadingState(false);}}>
           Clear Maze
         </button>
 
@@ -332,6 +358,7 @@ export default function Maze() {
 const createNode = (col, row) => {
   return {
 		start: false,
+		finish: false,
     col,
     row,
     top: false,
