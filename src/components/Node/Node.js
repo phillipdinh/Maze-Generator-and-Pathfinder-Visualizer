@@ -29,10 +29,10 @@ export default function Node(props) {
     'node': true,
     //'start': props.col === 0 && props.row === 0 ? true : false,
 		'start': props.start,
-    'finish': props.col === 15 && props.row === 15 ? true : false,
-		'node-active': props.active && !props.start,
-		'node-shortest-path': props.sp && !props.start,
-		'node-checked': props.checked && !props.start,
+    'finish': props.finish,
+		'node-active': props.active && !props.start && !props.finish,
+		'node-shortest-path': props.sp && !props.start && !props.finish,
+		'node-checked': props.checked && !props.start && !props.finish,
   });
   return <div id={id} className={classNames} style={styles}></div>;
 }
