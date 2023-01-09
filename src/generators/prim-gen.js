@@ -1,6 +1,6 @@
 import { getNeighbors, getRand, checkNeighbors, getAllNodes, getOppDir } from "../components/Maze/Maze-Helper";
 
-export default function primGen(grid) {
+export default function primGen(startCol, startRow, grid) {
 		// clearMaze();
 	function recurse(col, row) {
 		//await setNewNode(col, row);
@@ -56,7 +56,7 @@ export default function primGen(grid) {
   const visitedNodesInOrder = [];
 	const list = [];
 	
-	recurse(0, 0);
+	recurse(startCol, startRow);
 
 	return visitedNodesInOrder;
 }
