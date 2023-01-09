@@ -11,7 +11,7 @@ export default function divGen(grid){
 		if (width < 2 || height < 2) return;
 	
 		// Boolean (True if orientation is horizontal)
-		const horizontal = orientation == "horizontal";
+		const horizontal = orientation === "horizontal";
 	
 		// col + 0 if (horizontal) is TRUE
 		// col + rand(0 ... width - 2) if FALSE
@@ -55,7 +55,7 @@ export default function divGen(grid){
 		const dy = horizontal ? 0 : 1;
 	
 		for (let i = 0; i < length; i++) {
-			if (wx != px || wy != py) {
+			if (wx !== px || wy !== py) {
 				if (horizontal) {
 					//updateMaze(wx, wy, "bottom", false);
 					//updateMaze(wx, wy + 1, "top", false);
@@ -118,6 +118,6 @@ function chooseOrientation(width, height) {
 	if (width < height) return "horizontal";
 	else if (height < width) return "vertical";
 	else {
-		return Math.floor(Math.random() * 2) == 0 ? "horizontal" : "vertical";
+		return Math.floor(Math.random() * 2) === 0 ? "horizontal" : "vertical";
 	}
 }
