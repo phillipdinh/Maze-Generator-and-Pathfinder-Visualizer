@@ -1,10 +1,12 @@
 import { getNeighbors, getRand, checkNeighborsSolve, getAllNodes } from "../components/Maze/Maze-Helper";
 
-export default function dfsSolve(grid) {
+export default function dfsSolve(startCol, startRow, 
+																finishCol, finishRow, grid) {
+
   function backTrack(col, row, maze) {
     maze[col][row].visited = true;
 
-		if(col === 15 && row === 15){
+		if(col === finishCol && row === finishRow){
 			return;
 		}
 		
@@ -42,6 +44,7 @@ export default function dfsSolve(grid) {
   const list = [];
   var visitedCount = 0;
 
-  backTrack(0, 0, maze);
+  backTrack(startCol, startRow, maze);
+	
   return visitedNodesInOrder;
 }

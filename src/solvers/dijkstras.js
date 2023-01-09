@@ -1,12 +1,10 @@
 import { getNeighbors } from "../components/Maze/Maze-Helper";
-export default function dijkstra(maze) {
-  // Returns object with keys of neighbors and boolean values
+export default function dijkstra(startCol, startRow, 
+																	finishCol, finishRow, maze) {
 
-  /*TODO:
-		Add shortest path animation
-	*/
   const visitedNodesInOrder = [];
-  maze[0][0].distance = 0;
+
+  maze[startCol][startRow].distance = 0;
 
   const unvisitedNodes = getAllNodes(maze);
   while (!!unvisitedNodes.length) {
@@ -19,10 +17,9 @@ export default function dijkstra(maze) {
     closestNode.visited = true;
     visitedNodesInOrder.push(closestNode);
 
-    if (closestNode === maze[15][15]) return visitedNodesInOrder;
+    if (closestNode === maze[finishCol][finishRow]) return visitedNodesInOrder;
 
     updateUnvisited(closestNode, maze);
-
   }
 }
 
