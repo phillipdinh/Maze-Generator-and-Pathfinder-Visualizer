@@ -14,30 +14,48 @@ import "./Maze.css"
 	Change UI
 	Add algorithm inffo
 */
-const DELAY_GEN = 1
+const DELAY_GEN = 10
 const DELAY_SOLVE = 5
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag) {
-		console.log(maze)
+		console.log(visitedNodes)
+		// for (let i = 0; i < visitedNodes.length; i++) {
+		// 	// If a node
+		// 	if (!oppDir.hasOwnProperty(visitedNodes[i])) {
+		// 		const node = visitedNodes[i]
+
+		// 		if (oppDir.hasOwnProperty(visitedNodes[i + 1])) {
+		// 			const direction = visitedNodes[i + 1]
+
+		// 			setTimeout(() => {
+		// 				updateMaze(node.col, node.row, direction, flag)
+		// 			}, DELAY_GEN * i)
+		// 		}
+
+		// 		if (!ifStartFinish(node.col, node.row)) {
+		// 			setTimeout(() => {
+		// 				updateMaze(node.col, node.row, "active", true)
+		// 			}, DELAY_GEN * i)
+		// 		}
+		// 	}
+		// }
 		for (let i = 0; i < visitedNodes.length; i++) {
-			// If a direction
-			if (!oppDir.hasOwnProperty(visitedNodes[i])) {
-				const node = visitedNodes[i]
+			const node = visitedNodes[i][0]
 
-				if (oppDir.hasOwnProperty(visitedNodes[i + 1])) {
-					const direction = visitedNodes[i + 1]
+			if (visitedNodes[i][1]) {
+				const direction = visitedNodes[i][1]
 
-					setTimeout(() => {
-						updateMaze(node.col, node.row, direction, flag)
-					}, DELAY_GEN * i)
-				}
+				setTimeout(() => {
+					updateMaze(node.col, node.row, direction, flag)
+				}, DELAY_GEN * i)
+			}
 
-				if (!ifStartFinish(node.col, node.row)) {
-					setTimeout(() => {
-						updateMaze(node.col, node.row, "active", true)
-					}, DELAY_GEN * i)
-				}
+			console.log(node)
+			if (!ifStartFinish(node.col, node.row)) {
+				setTimeout(() => {
+					updateMaze(node.col, node.row, "active", true)
+				}, DELAY_GEN * i)
 			}
 		}
 		resetVisited(DELAY_GEN, visitedNodes.length)
@@ -46,14 +64,12 @@ export default function Maze() {
 	function visualizeDfsGen() {
 		resetMaze()
 		const visitedNodes = dfsGen(startCol.current, startRow.current, maze)
-
 		animateMazeGen(visitedNodes, true)
 	}
 
 	function visualizeDivGen() {
 		resetMaze()
 		delWalls()
-
 		const visitedNodes = divGen(maze)
 		animateMazeGen(visitedNodes, false)
 	}
@@ -112,7 +128,6 @@ export default function Maze() {
 
 	function visualizeDijkstras() {
 		resetSolve()
-
 		const visitedNodes = dijkstra(
 			startCol.current,
 			startRow.current,
@@ -127,7 +142,6 @@ export default function Maze() {
 					animateShortestPathDij()
 				}, DELAY_SOLVE * i)
 			}
-
 			const node = visitedNodes[i]
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
