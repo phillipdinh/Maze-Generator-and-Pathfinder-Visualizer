@@ -1,81 +1,81 @@
 .node {
-  border: 1px solid black;
+	border: 1px solid black;
 	background-color: rgba(155, 155, 155, 0.75);
-  aspect-ratio: 1;
+	aspect-ratio: 1;
 }
 .start {
-  background-color: green;
+	background-color: green;
 }
 
 .finish {
-  background-color: red;
+	background-color: red;
 }
 
 .node-marked {
-  animation-name: markedAnimation;
-  animation-duration: .75s;
-  animation-timing-function: ease;
-  animation-direction: normal;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
+	animation-name: markedAnimation;
+	animation-duration: 0.75s;
+	animation-timing-function: ease;
+	animation-direction: normal;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-play-state: running;
 }
 
 @keyframes markedAnimation {
-	from{
+	from {
 		transform: scale(1);
-    background-color: purple;
+		background-color: purple;
 	}
 
-  to {
-    transform: scale(1);
-    background-color: rgb(255, 255, 0);
-  }
+	to {
+		transform: scale(1);
+		background-color: rgb(255, 255, 0);
+	}
 }
 
 .node-shortest-path {
-  animation-name: shortestPath;
-  animation-duration: 1.5s;
-  animation-timing-function: ease;
-  animation-direction: normal;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
+	animation-name: shortestPath;
+	animation-duration: 1.5s;
+	animation-timing-function: ease;
+	animation-direction: normal;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-play-state: running;
 }
 
 @keyframes shortestPath {
 	0% {
 		transform: scale(1);
-    background-color: purple;
+		background-color: purple;
 	}
-  50% {
+	50% {
 		transform: scale(1);
 		background-color: rgba(0, 110, 255, 0.75);
-  }
+	}
 
-  100% {
+	100% {
 		transform: scale(1);
 		background-color: rgba(71, 173, 189, 0.75);
-  }
+	}
 }
 
 .node-active {
-  animation-name: generateWalls;
-  animation-duration: .2s;
+	animation-name: generateWalls;
+	animation-duration: 0.2s;
 	animation-direction: normal;
-  animation-timing-function: linear;
-  animation-iteration-count: 1;
-  animation-fill-mode: forwards;
-  animation-play-state: running;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+	animation-play-state: running;
 }
 
 @keyframes generateWalls {
 	from {
 		transform: scale(1);
-    background-color: purple;
+		background-color: purple;
 	}
-  to {
-    transform: scale(1);
-    background-color: rgba(155, 155, 155, 0.75);
-  }
+	to {
+		transform: scale(1);
+		background-color: rgba(155, 155, 155, 0.75);
+	}
 }
