@@ -1,11 +1,5 @@
 import { getNeighbors } from "../components/Maze/Maze-Helper"
-export default function dijkstra(
-	startCol,
-	startRow,
-	finishCol,
-	finishRow,
-	maze
-) {
+export default function dijkstra(startCol, startRow, finishCol, finishRow, maze) {
 	const visitedNodesInOrder = []
 
 	maze[startCol][startRow].distance = 0
@@ -21,15 +15,13 @@ export default function dijkstra(
 		closestNode.visited = true
 		visitedNodesInOrder.push(closestNode)
 
-		if (closestNode === maze[finishCol][finishRow])
-			return visitedNodesInOrder
+		if (closestNode === maze[finishCol][finishRow]) return visitedNodesInOrder
 
 		updateUnvisited(closestNode, maze)
 	}
 }
 
-/////////////////// Helper FUnctions //////////////////////////
-///////////////////////////////////////////////////////////////
+/////////////////// Helper Functions //////////////////////////
 function getAllNodes(maze) {
 	const nodes = []
 	for (const row of maze) {
@@ -42,7 +34,7 @@ function getAllNodes(maze) {
 
 function checkUnvisited(col, row, maze) {
 	const neighbors = getNeighbors(col, row)
-	const goodNeighbors = []
+	const validNeighbors = []
 
 	for (const dir in neighbors) {
 		// neighbor col and row
@@ -57,19 +49,19 @@ function checkUnvisited(col, row, maze) {
 			continue
 		}
 
-		// If neighbor has not been visited return good neighbor
+		// If neighbor has not been visited return valid neighbor
 		else if (!maze[c][r].visited) {
-			goodNeighbors.push(maze[c][r])
+			validNeighbors.push(maze[c][r])
 		}
 	}
 
-	return goodNeighbors
+	return validNeighbors
 }
 
 function updateUnvisited(node, maze) {
-	const goodNeighbors = checkUnvisited(node.col, node.row, maze)
+	const validNeighbors = checkUnvisited(node.col, node.row, maze)
 
-	for (const n of goodNeighbors) {
+	for (const n of validNeighbors) {
 		n.distance = node.distance + 1
 		n.previousNode = node
 	}

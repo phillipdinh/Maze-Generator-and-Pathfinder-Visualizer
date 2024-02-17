@@ -1,53 +1,45 @@
 import {
 	getNeighbors,
 	getRand,
-	checkNeighborsSolve,
-	getAllNodes
+	checkNeighborsSolve
 } from "../components/Maze/Maze-Helper"
 
-export default function dfsSolve(
-	startCol,
-	startRow,
-	finishCol,
-	finishRow,
-	grid
-) {
+/* Solve maze with recursive DFS and track path taken
+ */
+export default function dfsSolve(startCol, startRow, finishCol, finishRow, maze) {
 	function backTrack(col, row, maze) {
 		maze[col][row].visited = true
 
 		if (col === finishCol && row === finishRow) {
 			return
 		}
-
 		visitedNodesInOrder.push(maze[col][row])
 
+		// backTrack() and mark node as false if no valid neighbors are found
 		if (visitedCount < maze.length * maze[0].length) {
 			const neighbors = getNeighbors(col, row)
-			const goodNeighbors = checkNeighborsSolve(col, row, neighbors, maze)
-			const randDir = getRand(goodNeighbors)
+			const validNeighbors = checkNeighborsSolve(col, row, neighbors, maze)
+			const randDir = getRand(validNeighbors)
 
 			if (randDir) {
-				list.push([col, row])
+				stack.push([col, row])
 				visitedCount = visitedCount + 1
 
-				// random neighbor
 				const [nCol, nRow] = neighbors[randDir]
 				return backTrack(nCol, nRow, maze)
-			} else {
-				visitedNodesInOrder.push(false)
 			}
+			visitedNodesInOrder.push(false)
 
-			if (list.length > 0) {
-				const lastNode = list.pop()
+			if (stack.length > 0) {
+				const lastNode = stack.pop()
 				return backTrack(lastNode[0], lastNode[1], maze)
 			}
 			return
 		}
 	}
 
-	const maze = getAllNodes(grid)
 	const visitedNodesInOrder = []
-	const list = []
+	const stack = []
 	var visitedCount = 0
 
 	backTrack(startCol, startRow, maze)
