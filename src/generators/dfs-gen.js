@@ -6,35 +6,31 @@ import {
 	getOppDir
 } from "../components/Maze/Maze-Helper"
 
+/*
+ * Generates maze path with a randomized dfs method
+ */
 export default function dfsGen(startCol, startRow, grid) {
 	function backTrack(col, row, maze) {
 		maze[col][row].visited = true
 
-		visitedNodesInOrder.push(maze[col][row])
-
+		// VisitedCount used to check if dfs is complete
 		if (visitedCount < maze.length * maze[0].length) {
 			const neighbors = getNeighbors(col, row)
 			const goodNeighbors = checkNeighbors(col, row, neighbors, maze)
-			const randDir = getRand(goodNeighbors)
+			const randNeighbor = getRand(goodNeighbors)
 
-			if (randDir) {
-				const [nCol, nRow] = neighbors[randDir]
+			if (randNeighbor) {
+				const [nCol, nRow] = neighbors[randNeighbor]
 				list.push([col, row])
 				visitedCount = visitedCount + 1
 
-				//Wall
-				//updateMaze(col, row, randDir, true);
-				visitedNodesInOrder.push(randDir)
+				visitedNodesInOrder.push([maze[col][row], [randNeighbor]])
+				visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(randNeighbor)])
 
-				//const oppD = getOppDir(randDir);
-				//const neighbors = getNeighbors(node.col, node.row);
-				//const nextNode = neighbors[direction];
-
-				visitedNodesInOrder.push(maze[nCol][nRow])
-				visitedNodesInOrder.push(getOppDir(randDir))
-
-				// random neighbor
+				// Random neighbor
 				return backTrack(nCol, nRow, maze)
+			} else {
+				visitedNodesInOrder.push([maze[col][row]])
 			}
 
 			if (list.length > 0) {
