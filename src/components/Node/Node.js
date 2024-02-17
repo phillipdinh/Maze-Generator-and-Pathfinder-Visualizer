@@ -2,6 +2,9 @@ import React from "react"
 import "./Node.css"
 import classnames from "classnames"
 
+/* Child of Maze
+ * props are used to set maze walls and animations
+ */
 export default function Node(props) {
 	const styles = {
 		borderTopWidth: props.top ? 0 : "2px",
@@ -16,18 +19,9 @@ export default function Node(props) {
 	}
 
 	const [id] = React.useState(`node-${props.col}-${props.row}`)
-	/*
-  const startOrFinish =
-    props.col === 0 && props.row === 0
-      ? "start"
-      : props.col === 15 && props.row === 15
-      ? "finish"
-      : "";
-*/
 
 	const classNames = classnames({
 		node: true,
-		//'start': props.col === 0 && props.row === 0 ? true : false,
 		start: props.start,
 		finish: props.finish,
 		"node-active": props.active && !props.start && !props.finish,
