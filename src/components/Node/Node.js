@@ -32,7 +32,7 @@ export default function Node(props) {
     'finish': props.finish,
 		'node-active': props.active && !props.start && !props.finish,
 		'node-shortest-path': props.sp && !props.start && !props.finish,
-		'node-checked': props.checked && !props.start && !props.finish,
+		'node-marked': props.marked && !props.start && !props.finish,
   });
   return <div id={id} className={classNames} style={styles}></div>;
 }
