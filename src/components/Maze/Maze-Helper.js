@@ -1,14 +1,6 @@
-export function getAllNodes(maze) {
-	const nodes = []
-	for (let x = 0; x < 16; x++) {
-		const currRow = []
-		for (let y = 0; y < 16; y++) {
-			currRow.push(maze[x][y])
-		}
-		nodes.push(currRow)
-	}
-	return nodes
-}
+/*
+ * Shared functions used by generators and solvers
+ */
 
 export function getNeighbors(col, row) {
 	return {

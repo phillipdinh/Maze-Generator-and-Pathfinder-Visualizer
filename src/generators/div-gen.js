@@ -1,8 +1,5 @@
-import { getAllNodes } from "../components/Maze/Maze-Helper"
-
-export default function divGen(grid) {
+export default function divGen(maze) {
 	function divide(col, row, width, height, orientation) {
-		
 		if (width < 2 || height < 2) return
 
 		// Boolean (True if orientation is horizontal)
@@ -72,8 +69,6 @@ export default function divGen(grid) {
 		}
 	}
 
-	// Have to set maze to empty first
-	const maze = getAllNodes(grid)
 	const visitedNodesInOrder = []
 
 	divide(0, 0, 16, 16, chooseOrientation(16, 16))

@@ -2,14 +2,13 @@ import {
 	getNeighbors,
 	getRand,
 	checkNeighbors,
-	getAllNodes,
 	getOppDir
 } from "../components/Maze/Maze-Helper"
 
 /*
  * Generates maze path with a randomized dfs method
  */
-export default function dfsGen(startCol, startRow, grid) {
+export default function dfsGen(startCol, startRow, maze) {
 	function backTrack(col, row, maze) {
 		maze[col][row].visited = true
 
@@ -41,7 +40,7 @@ export default function dfsGen(startCol, startRow, grid) {
 		}
 	}
 
-	const maze = getAllNodes(grid)
+	//const maze = getAllNodes(grid)
 	const visitedNodesInOrder = []
 	const list = []
 	var visitedCount = 0
