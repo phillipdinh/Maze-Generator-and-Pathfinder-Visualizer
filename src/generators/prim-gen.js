@@ -41,11 +41,8 @@ export default function primGen(startCol, startRow, grid) {
 			if (index > -1) list.splice(index, 1)
 		} while (nCol === -1 || nRow === -1 || maze[c][r].visited === true) // If the random chosen node is already visited or its oppNode is the border continue
 
-		visitedNodesInOrder.push(maze[c][r])
-		visitedNodesInOrder.push(dir)
-
-		visitedNodesInOrder.push(maze[nCol][nRow])
-		visitedNodesInOrder.push(getOppDir(dir))
+		visitedNodesInOrder.push([maze[c][r], dir])
+		visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(dir)])
 
 		return recurse(c, r)
 	}

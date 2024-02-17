@@ -1,9 +1,8 @@
-//import { getNeighbors, getRand, checkNeighbors, getAllNodes } from "../components/Maze/Maze-Helper";
 import { getAllNodes } from "../components/Maze/Maze-Helper"
 
 export default function divGen(grid) {
 	function divide(col, row, width, height, orientation) {
-		// Stop recursion
+		
 		if (width < 2 || height < 2) return
 
 		// Boolean (True if orientation is horizontal)
@@ -11,13 +10,11 @@ export default function divGen(grid) {
 
 		// col + 0 if (horizontal) is TRUE
 		// col + rand(0 ... width - 2) if FALSE
-		var wx =
-			col + (horizontal ? 0 : Math.floor(Math.random() * (width - 2)))
+		var wx = col + (horizontal ? 0 : Math.floor(Math.random() * (width - 2)))
 
 		// row + 0 if (horizontal) is FALSE
 		// row + rand(0 ... height - 2) if TRUE
-		var wy =
-			row + (horizontal ? Math.floor(Math.random() * (height - 2)) : 0)
+		var wy = row + (horizontal ? Math.floor(Math.random() * (height - 2)) : 0)
 
 		// passage
 		const px = wx + (horizontal ? Math.floor(Math.random() * width) : 0)
@@ -53,37 +50,19 @@ export default function divGen(grid) {
 		for (let i = 0; i < length; i++) {
 			if (wx !== px || wy !== py) {
 				if (horizontal) {
-					//updateMaze(wx, wy, "bottom", false);
-					//updateMaze(wx, wy + 1, "top", false);
-
-					//Create Walls
-					visitedNodesInOrder.push(maze[wx][wy])
-					visitedNodesInOrder.push("bottom")
-
-					visitedNodesInOrder.push(maze[wx][wy + 1])
-					visitedNodesInOrder.push("top")
+					visitedNodesInOrder.push([maze[wx][wy], "bottom"])
+					visitedNodesInOrder.push([maze[wx][wy + 1], "top"])
 				} else {
-					//updateMaze(wx, wy, "right", false);
-					//updateMaze(wx + 1, wy, "left", false);
-
-					//Create Walls
-					visitedNodesInOrder.push(maze[wx][wy])
-					visitedNodesInOrder.push("right")
-
-					visitedNodesInOrder.push(maze[wx + 1][wy])
-					visitedNodesInOrder.push("left")
+					visitedNodesInOrder.push([maze[wx][wy], "right"])
+					visitedNodesInOrder.push([maze[wx + 1][wy], "left"])
 				}
 			} else {
 				if (horizontal) {
-					//updateMaze(wx, wy, "bottom", false);
-					//updateMaze(wx, wy + 1, "top", false);
-
-					//Create Walls
-					visitedNodesInOrder.push(maze[px][py])
-					visitedNodesInOrder.push(maze[px][py + 1])
+					visitedNodesInOrder.push([maze[px][py]])
+					visitedNodesInOrder.push([maze[px][py + 1]])
 				} else {
-					visitedNodesInOrder.push(maze[px][py])
-					visitedNodesInOrder.push(maze[px + 1][py])
+					visitedNodesInOrder.push([maze[px][py]])
+					visitedNodesInOrder.push([maze[px + 1][py]])
 				}
 			}
 
@@ -102,10 +81,11 @@ export default function divGen(grid) {
 	return visitedNodesInOrder
 }
 
+/* Horizontal   if Height is larger
+ * Vertical     if Width if larger
+ * Return either randomly if equal
+ */
 function chooseOrientation(width, height) {
-	// Horizontal if Height is larger
-	// Vertical if Width if larger
-	// Return either randomly if equal
 	if (width < height) return "horizontal"
 	else if (height < width) return "vertical"
 	else {
