@@ -11,17 +11,16 @@ import primGen from "../../generators/prim-gen";
 import "./Maze.css";
 
 /*TODO:
-	Add one more algorithm
-	Make Animation Prettier
 	Change UI
-
+	Add algorithm inffo
 */
 const DELAY_GEN = 1;
-const DELAY_SOLVE = 10;
+const DELAY_SOLVE = 5;
 
 export default function Maze() {
 
 	function animateMazeGen(visitedNodes, flag){
+		console.log(maze);
 		for (let i = 0; i < visitedNodes.length; i++) {
 			// If a direction
 			if (!oppDir.hasOwnProperty(visitedNodes[i])) {
@@ -84,7 +83,7 @@ export default function Maze() {
 
 			if ( (i < len - 1) && (visitedNodes[i+1] === false)){
 				setTimeout(() => {
-					setChecked(node.col, node.row);
+					setMarked(node.col, node.row);
 				}, DELAY_SOLVE * i);
 			}
 		}
@@ -123,7 +122,7 @@ export default function Maze() {
 			if (!ifStartFinish(node.col, node.row)){
 				setTimeout(() => {
 					stepCount.current = stepCount.current + 1;
-					setChecked(node.col, node.row);
+					setMarked(node.col, node.row);
 				}, DELAY_SOLVE * i); 
 			}
     }
@@ -135,10 +134,10 @@ export default function Maze() {
     setMaze(copyMaze);
   }
 
-	function setChecked(col, row){
+	function setMarked(col, row){
 		updateMaze(col, row, "sp", false);
 		updateMaze(col, row, "walls", false);
-		updateMaze(col, row, "checked", true);
+		updateMaze(col, row, "marked", true);
 	}
 
 	function setShortestPath(col, row){
@@ -171,7 +170,7 @@ export default function Maze() {
 			for (let r = 0; r < 16; r++) {
 				if (!ifStartFinish(c, r)){
 					updateMaze(c, r, "sp", false);
-					updateMaze(c, r, "checked", false);
+					updateMaze(c, r, "marked", false);
 					updateMaze(c, r, "active", false);
 				}
 			}
@@ -218,13 +217,14 @@ export default function Maze() {
 		stepCount.current = 0;
 
 		const newMaze = mazeInit();
-		newMaze.map((col, colIdx) => {
-      col.map((node, rowIdx) => {
+
+		for (let c = 0; c < 16; c++) {
+			for (let r = 0; r < 16; r++) {
 				let copyMaze = [...maze];
-				copyMaze[colIdx][rowIdx] = newMaze[colIdx][rowIdx];
+				copyMaze[c][r] = newMaze[c][r];
 				setMaze(copyMaze);
-      });
-    });
+			}
+		}
 
 		updateMaze(startCol.current, startRow.current, "start", true);
 		updateMaze(finishCol.current, finishRow.current, "finish", true);
@@ -240,11 +240,13 @@ export default function Maze() {
 
   const [maze, setMaze] = React.useState(mazeInit());
 	const [loadingState, setLoadingState] = React.useState(false);
+
+	const stepCount = React.useRef(0);
 	const startCol = React.useRef(0);
 	const startRow = React.useRef(0);
 	const finishCol = React.useRef(0);
 	const finishRow = React.useRef(0);
-	const stepCount = React.useRef(0);
+
 
   const styles = {
     display: "inline-grid",
@@ -259,19 +261,19 @@ export default function Maze() {
           <button 
 						className="maze-button" 
 						onClick={() => {visualizeDfsGen();}}>
-            DFS
+            Depth First Search
           </button>
 
 					<button 
 						className="maze-button"
             onClick={() => {visualizePrimGen();}}>
-            Prim
+            Prim's MST
           </button>
 
 					<button
             className="maze-button"
             onClick={() => {visualizeDivGen();}}>
-            DIV
+            Recursive Division
           </button>
         </div>
 
@@ -280,13 +282,19 @@ export default function Maze() {
 					<button
             className="maze-button"
             onClick={() => {visualizeDfsSolve();}}>
-            DFS
+            Depth First Search
           </button>
 
           <button
             className="maze-button"
             onClick={() => {visualizeDijkstras();}}>
-            DIJ
+            Dijkstra's Shortest Path
+          </button>
+
+					<button
+            className="maze-button"
+            onClick={() => {visualizeDijkstras();}}>
+            A* Search
           </button>
         </div>
 				{loadingState && <div className="loading-overlay"></div>}
@@ -299,40 +307,25 @@ export default function Maze() {
               <div key={rowIdx}>
                 {block.map((node, nodeIdx) => {
                   const {
-										start,
-										finish,
-                    col,
-                    row,
-                    top,
-                    bottom,
-                    left,
-                    right,
-										active,
-                    visited,
-                    distance,
-                    previousNode,
-										sp,
-										checked,
-										curr,
+										start, finish,
+                    top, bottom, left, right,
+										active, marked, sp,
+										g, f,
                   } = node;
                   return (
                     <Node
                       key={nodeIdx}
 											start={start}
 											finish={finish}
-                      col={col}
-                      row={row}
                       top={top}
                       bottom={bottom}
                       left={left}
                       right={right}
 											active={active}
-                      visited={visited}
-                      distance={distance}
-                      previousNode={previousNode}
+											marked={marked}
 											sp={sp}
-											checked={checked}
-											curr={curr}
+											g={g}
+											f={f}
                     ></Node>
                   );
                 })}
@@ -357,21 +350,15 @@ export default function Maze() {
 
 const createNode = (col, row) => {
   return {
-		start: false,
-		finish: false,
-    col,
-    row,
-    top: false,
-    bottom: false,
-    left: false,
-    right: false,
-    visited: false,
-		walls: false,
+		col, row,
+		start: false, finish: false,
+    top: false, bottom: false, left: false, right: false,
+		active: false, marked: false, sp: false, 
+		visited: false,
     distance: Infinity,
     previousNode: null,
-		sp: false,
-		checked: false,
-		curr: false,
+		g: Infinity,
+		f: Infinity,
   };
 };
 
