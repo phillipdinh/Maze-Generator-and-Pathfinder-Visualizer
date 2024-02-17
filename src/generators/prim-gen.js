@@ -11,12 +11,11 @@ export default function primGen(startCol, startRow, grid) {
 
 		// push all good neighbors with the opposite direction to the list.
 		// (So we can delete the connected wall from the original node when the neighbor is processed)
-		goodNeighbors.map((direction) => {
-			// give neighbors at given direction the opposite direction at [2]
+
+		for (const direction of goodNeighbors) {
 			neighbors[direction].push(getOppDir(direction));
-			// push neighbor at given direction to list
 			list.push(neighbors[direction]);
-		});
+		}
 
 		do {
 			if (list.length <= 0) {
