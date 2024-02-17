@@ -12,34 +12,17 @@ import "./Maze.css"
 
 /*TODO:
 	Change UI
-	Add algorithm inffo
+	Add algorithm info
+    Add Buttons hover
+    Add Cancel
+    
 */
-const DELAY_GEN = 10
+const DELAY_GEN = 2
 const DELAY_SOLVE = 5
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag) {
 		console.log(visitedNodes)
-		// for (let i = 0; i < visitedNodes.length; i++) {
-		// 	// If a node
-		// 	if (!oppDir.hasOwnProperty(visitedNodes[i])) {
-		// 		const node = visitedNodes[i]
-
-		// 		if (oppDir.hasOwnProperty(visitedNodes[i + 1])) {
-		// 			const direction = visitedNodes[i + 1]
-
-		// 			setTimeout(() => {
-		// 				updateMaze(node.col, node.row, direction, flag)
-		// 			}, DELAY_GEN * i)
-		// 		}
-
-		// 		if (!ifStartFinish(node.col, node.row)) {
-		// 			setTimeout(() => {
-		// 				updateMaze(node.col, node.row, "active", true)
-		// 			}, DELAY_GEN * i)
-		// 		}
-		// 	}
-		// }
 		for (let i = 0; i < visitedNodes.length; i++) {
 			const node = visitedNodes[i][0]
 
@@ -51,7 +34,6 @@ export default function Maze() {
 				}, DELAY_GEN * i)
 			}
 
-			console.log(node)
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
 					updateMaze(node.col, node.row, "active", true)
@@ -151,6 +133,9 @@ export default function Maze() {
 			}
 		}
 	}
+
+	//TODO: Finish
+	function visualizeAStar() {}
 
 	function updateMaze(col, row, prop, update) {
 		let copyMaze = [...maze]
@@ -334,7 +319,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeDijkstras()
+							visualizeAStar()
 						}}
 					>
 						A* Search
