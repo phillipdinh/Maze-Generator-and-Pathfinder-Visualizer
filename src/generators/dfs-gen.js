@@ -16,20 +16,19 @@ export default function dfsGen(startCol, startRow, maze) {
 			// Choose a random neighbor
 			const neighbors = getNeighbors(col, row)
 			const validNeighbors = checkNeighbors(neighbors, maze)
-			const randNeighbor = getRand(validNeighbors)
+			const randDir = getRand(validNeighbors)
 
-			// Add randNeighbor to DFS path if valid
-			if (randNeighbor) {
+			// Add randDir to DFS path if valid
+			if (randDir) {
 				visitedCount = visitedCount + 1
-				const [nCol, nRow] = neighbors[randNeighbor]
+				const [nCol, nRow] = neighbors[randDir]
 				stack.push([col, row])
 
-				visitedNodesInOrder.push([maze[col][row], [randNeighbor]])
-				visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(randNeighbor)])
+				visitedNodesInOrder.push([maze[col][row], [randDir]])
+				visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(randDir)])
 				return backTrack(nCol, nRow, maze)
 			}
 			visitedNodesInOrder.push([maze[col][row]])
-
 			// Called when current node has no valid neighbors
 			if (stack.length > 0) {
 				const lastNode = stack.pop()
