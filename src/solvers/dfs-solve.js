@@ -1,5 +1,4 @@
 import {
-	getNeighbors,
 	getRand,
 	checkNeighborsSolve
 } from "../components/Maze/Maze-Helper"
@@ -17,15 +16,12 @@ export default function dfsSolve(startCol, startRow, finishCol, finishRow, maze)
 
 		// backTrack() and mark node as false if no valid neighbors are found
 		if (visitedCount < maze.length * maze[0].length) {
-			//const neighbors = getNeighbors(col, row)
 			const validNeighbors = checkNeighborsSolve(col, row, maze)
 			const randNeighbor = getRand(validNeighbors)
 
 			if (randNeighbor) {
 				openNodes.push([col, row])
 				visitedCount = visitedCount + 1
-
-				//const [nCol, nRow] = neighbors[randDir]
 				return backTrack(randNeighbor.col, randNeighbor.row, maze)
 			}
 			visitedNodesInOrder.push(false)

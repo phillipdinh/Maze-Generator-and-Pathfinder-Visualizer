@@ -13,7 +13,7 @@ export function getNeighbors(col, row) {
 }
 
 /* Given an object neighbors with direction keys and index values
- * return array of unvisited neighbors with valid indexes
+ * return array of unvisited neighbors as directions
  */
 export function checkNeighbors(neighbors, maze) {
 	return Object.keys(neighbors).filter((direction) => {
@@ -30,34 +30,18 @@ export function checkNeighbors(neighbors, maze) {
 }
 
 /* Similar to checkNeighbors() but also checks if neighbor is blocked by a wall
+ * Returns an array of nodes
  */
 export function checkNeighborsSolve(col, row, maze) {
-	/*
-	return Object.keys(neighbors).filter((direction) => {
-		const [c, r] = neighbors[direction]
-
-		if (c === -1 || r === -1 || maze[col][row][direction] === false) return false
-
-		if (!maze[c][r].visited) {
-			const validNeighbor = maze[c][r]
-			return validNeighbor
-		}
-		return false
-	})
-*/
 	const neighbors = getNeighbors(col, row)
 	const validNeighbors = []
 
 	for (const dir in neighbors) {
-		// neighbor col and row
 		const [c, r] = neighbors[dir]
 
 		if (c === -1 || r === -1 || maze[col][row][dir] === false) {
 			continue
-		}
-
-		// If neighbor has not been visited return valid neighbor
-		else if (!maze[c][r].visited) {
+		} else if (!maze[c][r].visited) {
 			validNeighbors.push(maze[c][r])
 		}
 	}
