@@ -5,15 +5,13 @@ import {
 	getOppDir
 } from "../components/Maze/Maze-Helper"
 
-export default function dfsGen(node, maze) {
+export default function dfsGen(maze) {
 	function backTrack(node) {
-		console.log(node)
 		node.visited = true
 
 		if (visitedCount < maze.length * maze[0].length) {
 			// Choose a random neighbor
 			const neighbors = getNeighbors(node.col, node.row)
-			console.log(neighbors)
 			const validNeighbors = checkNeighbors(neighbors, maze)
 			const randDir = getRand(validNeighbors)
 
@@ -40,7 +38,7 @@ export default function dfsGen(node, maze) {
 	const visitedNodesInOrder = []
 	const stack = []
 	var visitedCount = 0
-	backTrack(node)
+	backTrack(maze[0][0])
 
 	return visitedNodesInOrder
 }

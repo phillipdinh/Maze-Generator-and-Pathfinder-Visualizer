@@ -6,10 +6,10 @@ import {
 } from "../components/Maze/Maze-Helper"
 
 //TODO: Update to use previous node
-export default function primGen(startCol, startRow, maze) {
-	function recurse(col, row) {
-		maze[col][row].visited = true
-		const neighbors = getNeighbors(col, row)
+export default function primGen(maze) {
+	function recurse(node) {
+		node.visited = true
+		const neighbors = getNeighbors(node.col, node.row)
 		const validNeighbors = checkNeighbors(neighbors, maze)
 
 		/* Push all valid neighbors with its opposite direction to openNodes
@@ -28,6 +28,7 @@ export default function primGen(startCol, startRow, maze) {
 			const randNode = getRand(openNodes)
 			var [c, r, dir] = randNode
 
+			//TODO: update so it uses the previous node prop and clean up neighbor functions
 			// Get index of previous node in path
 			const randNodeNeighbor = getNeighbors(c, r)
 			const prevNode = randNodeNeighbor[dir]
@@ -40,12 +41,12 @@ export default function primGen(startCol, startRow, maze) {
 
 		visitedNodesInOrder.push([maze[c][r], dir])
 		visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(dir)])
-		return recurse(c, r)
+		return recurse(maze[c][r])
 	}
 
 	const visitedNodesInOrder = []
 	const openNodes = []
-	recurse(startCol, startRow)
+	recurse(maze[0][0])
 
 	return visitedNodesInOrder
 }
