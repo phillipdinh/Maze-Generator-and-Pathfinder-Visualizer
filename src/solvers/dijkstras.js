@@ -1,8 +1,8 @@
 import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
-export default function dijkstra(startCol, startRow, finishCol, finishRow, maze) {
+export default function dijkstra(startNode, finishNode, maze) {
 	const visitedNodesInOrder = []
 
-	maze[startCol][startRow].distance = 0
+	startNode.distance = 0
 
 	const openNodes = getAllNodes(maze)
 	while (!!openNodes.length) {
@@ -15,7 +15,7 @@ export default function dijkstra(startCol, startRow, finishCol, finishRow, maze)
 		closestNode.visited = true
 		visitedNodesInOrder.push(closestNode)
 
-		if (closestNode === maze[finishCol][finishRow]) return visitedNodesInOrder
+		if (closestNode === finishNode) return visitedNodesInOrder
 
 		updateUnvisited(closestNode, maze)
 	}
