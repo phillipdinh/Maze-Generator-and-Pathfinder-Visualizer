@@ -1,5 +1,4 @@
 .maze {
-	min-width: 300px;
 	width: 40%;
 	margin-right: 10%;
 	border: 4px solid rgb(175, 216, 248);
@@ -9,7 +8,7 @@
 }
 .maze-div {
 	padding-top: 40px;
-	flex: 2;
+	flex: 1;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -22,7 +21,7 @@
 .maze-button-div {
 	display: flex;
 	margin-top: 40px;
-	margin-left: 40px;
+	margin-left: 2%;
 	max-height: 240px;
 	max-width: 272px;
 	border: 1px solid #444;
