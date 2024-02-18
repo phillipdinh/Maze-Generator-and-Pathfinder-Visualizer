@@ -31,7 +31,8 @@ export function checkNeighbors(neighbors, maze) {
 
 /* Similar to checkNeighbors() but also checks if neighbor is blocked by a wall
  */
-export function checkNeighborsSolve(col, row, neighbors, maze) {
+export function checkNeighborsSolve(col, row, maze) {
+	/*
 	return Object.keys(neighbors).filter((direction) => {
 		const [c, r] = neighbors[direction]
 
@@ -43,6 +44,25 @@ export function checkNeighborsSolve(col, row, neighbors, maze) {
 		}
 		return false
 	})
+*/
+	const neighbors = getNeighbors(col, row)
+	const validNeighbors = []
+
+	for (const dir in neighbors) {
+		// neighbor col and row
+		const [c, r] = neighbors[dir]
+
+		if (c === -1 || r === -1 || maze[col][row][dir] === false) {
+			continue
+		}
+
+		// If neighbor has not been visited return valid neighbor
+		else if (!maze[c][r].visited) {
+			validNeighbors.push(maze[c][r])
+		}
+	}
+
+	return validNeighbors
 }
 
 /* Choose random index in array
