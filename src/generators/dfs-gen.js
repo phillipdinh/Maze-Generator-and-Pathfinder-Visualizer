@@ -5,16 +5,15 @@ import {
 	getOppDir
 } from "../components/Maze/Maze-Helper"
 
-/*
- * Generates maze path with a randomized recursive DFS method
- */
-export default function dfsGen(startCol, startRow, maze) {
-	function backTrack(col, row, maze) {
-		maze[col][row].visited = true
+export default function dfsGen(node, maze) {
+	function backTrack(node) {
+		console.log(node)
+		node.visited = true
 
 		if (visitedCount < maze.length * maze[0].length) {
 			// Choose a random neighbor
-			const neighbors = getNeighbors(col, row)
+			const neighbors = getNeighbors(node.col, node.row)
+			console.log(neighbors)
 			const validNeighbors = checkNeighbors(neighbors, maze)
 			const randDir = getRand(validNeighbors)
 
@@ -22,17 +21,17 @@ export default function dfsGen(startCol, startRow, maze) {
 			if (randDir) {
 				visitedCount = visitedCount + 1
 				const [nCol, nRow] = neighbors[randDir]
-				stack.push([col, row])
+				stack.push(node)
 
-				visitedNodesInOrder.push([maze[col][row], [randDir]])
+				visitedNodesInOrder.push([node, [randDir]])
 				visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(randDir)])
-				return backTrack(nCol, nRow, maze)
+				return backTrack(maze[nCol][nRow])
 			}
-			visitedNodesInOrder.push([maze[col][row]])
+			visitedNodesInOrder.push([node])
 			// Called when current node has no valid neighbors
 			if (stack.length > 0) {
 				const lastNode = stack.pop()
-				return backTrack(lastNode[0], lastNode[1], maze)
+				return backTrack(lastNode)
 			}
 			return
 		}
@@ -41,7 +40,7 @@ export default function dfsGen(startCol, startRow, maze) {
 	const visitedNodesInOrder = []
 	const stack = []
 	var visitedCount = 0
-	backTrack(startCol, startRow, maze)
+	backTrack(node)
 
 	return visitedNodesInOrder
 }
