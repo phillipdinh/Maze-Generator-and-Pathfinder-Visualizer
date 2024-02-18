@@ -1,13 +1,13 @@
-import { getNeighbors } from "../components/Maze/Maze-Helper"
+import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
 export default function dijkstra(startCol, startRow, finishCol, finishRow, maze) {
 	const visitedNodesInOrder = []
 
 	maze[startCol][startRow].distance = 0
 
-	const unvisitedNodes = getAllNodes(maze)
-	while (!!unvisitedNodes.length) {
-		unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
-		const closestNode = unvisitedNodes.shift()
+	const openNodes = getAllNodes(maze)
+	while (!!openNodes.length) {
+		openNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
+		const closestNode = openNodes.shift()
 
 		// If the closest node is at a distance of infinity,
 		// we must be trapped and should therefore stop.
@@ -32,34 +32,8 @@ function getAllNodes(maze) {
 	return nodes
 }
 
-function checkUnvisited(col, row, maze) {
-	const neighbors = getNeighbors(col, row)
-	const validNeighbors = []
-
-	for (const dir in neighbors) {
-		// neighbor col and row
-		const [c, r] = neighbors[dir]
-
-		if (c === -1 || r === -1) {
-			continue
-		}
-
-		// check original node (top, bottom, left, right)
-		if (maze[col][row][dir] === false) {
-			continue
-		}
-
-		// If neighbor has not been visited return valid neighbor
-		else if (!maze[c][r].visited) {
-			validNeighbors.push(maze[c][r])
-		}
-	}
-
-	return validNeighbors
-}
-
 function updateUnvisited(node, maze) {
-	const validNeighbors = checkUnvisited(node.col, node.row, maze)
+	const validNeighbors = checkNeighborsSolve(node.col, node.row, maze)
 
 	for (const n of validNeighbors) {
 		n.distance = node.distance + 1
@@ -69,7 +43,7 @@ function updateUnvisited(node, maze) {
 
 // Backtracks from the finishNode to find the shortest path.
 // Only works when called *after* the dijkstra method above.
-export function getShortestPath(finishNode) {
+export function getShortestPath_dijkstras(finishNode) {
 	const nodesInShortestPathOrder = []
 	let currentNode = finishNode
 	while (currentNode !== null) {
