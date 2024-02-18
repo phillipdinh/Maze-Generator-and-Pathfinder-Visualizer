@@ -1,7 +1,8 @@
 import React from "react"
 import Node from "../Node/Node"
 
-import dijkstra, { getShortestPath } from "../../solvers/dijkstras"
+import dijkstra, { getShortestPath_dijkstras } from "../../solvers/dijkstras"
+import aStar, { getShortestPath_aStar } from "../../solvers/a-star"
 import dfsSolve from "../../solvers/dfs-solve"
 
 import dfsGen from "../../generators/dfs-gen"
@@ -15,7 +16,7 @@ import "./Maze.css"
 	Add algorithm info
     Add Buttons hover
     Add Cancel
-    
+    Pass start and finish nodes instead of col and rows
 */
 const DELAY_GEN = 2
 const DELAY_SOLVE = 5
@@ -43,26 +44,26 @@ export default function Maze() {
 		resetVisited(DELAY_GEN, visitedNodes.length)
 	}
 
-	function visualizeDfsGen() {
+	function visualize_dfsGen() {
 		resetMaze()
 		const visitedNodes = dfsGen(startCol.current, startRow.current, maze)
 		animateMazeGen(visitedNodes, true)
 	}
 
-	function visualizeDivGen() {
+	function visualize_divGen() {
 		resetMaze()
 		delWalls()
 		const visitedNodes = divGen(maze)
 		animateMazeGen(visitedNodes, false)
 	}
 
-	function visualizePrimGen() {
+	function visualize_primGen() {
 		resetMaze()
 		const visitedNodes = primGen(startCol.current, startRow.current, maze)
 		animateMazeGen(visitedNodes, true)
 	}
 
-	function visualizeDfsSolve() {
+	function visualize_dfsSolve() {
 		resetSolve()
 		const visitedNodes = dfsSolve(
 			startCol.current,
@@ -91,8 +92,8 @@ export default function Maze() {
 		resetVisited(DELAY_SOLVE, visitedNodes.length)
 	}
 
-	function animateShortestPathDij() {
-		const nodesInShortestPath = getShortestPath(
+	function animatePath_dijkstras() {
+		const nodesInShortestPath = getShortestPath_dijkstras(
 			maze[finishCol.current][finishRow.current]
 		)
 
@@ -108,7 +109,7 @@ export default function Maze() {
 		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
 	}
 
-	function visualizeDijkstras() {
+	function visualize_dijkstras() {
 		resetSolve()
 		const visitedNodes = dijkstra(
 			startCol.current,
@@ -121,7 +122,7 @@ export default function Maze() {
 		for (let i = 0; i < visitedNodes.length; i++) {
 			if (i === visitedNodes.length - 1) {
 				setTimeout(() => {
-					animateShortestPathDij()
+					animatePath_dijkstras()
 				}, DELAY_SOLVE * i)
 			}
 			const node = visitedNodes[i]
@@ -134,8 +135,47 @@ export default function Maze() {
 		}
 	}
 
-	//TODO: Finish
-	function visualizeAStar() {}
+	function animatePath_aStar() {
+		const nodesInShortestPath = getShortestPath_aStar(
+			maze[finishCol.current][finishRow.current]
+		)
+
+		for (let i = 0; i < nodesInShortestPath.length; i++) {
+			const node = nodesInShortestPath[i]
+
+			if (!ifStartFinish(node.col, node.row)) {
+				setTimeout(() => {
+					setShortestPath(node.col, node.row)
+				}, DELAY_SOLVE * i)
+			}
+		}
+		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
+	}
+	function visualize_aStar() {
+		resetSolve()
+		const visitedNodes = aStar(
+			startCol.current,
+			startRow.current,
+			finishCol.current,
+			finishRow.current,
+			maze
+		)
+
+		for (let i = 0; i < visitedNodes.length; i++) {
+			if (i === visitedNodes.length - 1) {
+				setTimeout(() => {
+					animatePath_aStar()
+				}, DELAY_SOLVE * i)
+			}
+			const node = visitedNodes[i]
+			if (!ifStartFinish(node.col, node.row)) {
+				setTimeout(() => {
+					stepCount.current = stepCount.current + 1
+					setMarked(node.col, node.row)
+				}, DELAY_SOLVE * i)
+			}
+		}
+	}
 
 	function updateMaze(col, row, prop, update) {
 		let copyMaze = [...maze]
@@ -144,14 +184,14 @@ export default function Maze() {
 	}
 
 	function setMarked(col, row) {
-		updateMaze(col, row, "sp", false)
+		updateMaze(col, row, "inPath", false)
 		updateMaze(col, row, "walls", false)
 		updateMaze(col, row, "marked", true)
 	}
 
 	function setShortestPath(col, row) {
 		updateMaze(col, row, "walls", false)
-		updateMaze(col, row, "sp", true)
+		updateMaze(col, row, "inPath", true)
 	}
 
 	function delWalls() {
@@ -178,7 +218,7 @@ export default function Maze() {
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
 				if (!ifStartFinish(c, r)) {
-					updateMaze(c, r, "sp", false)
+					updateMaze(c, r, "inPath", false)
 					updateMaze(c, r, "marked", false)
 					updateMaze(c, r, "active", false)
 				}
@@ -203,10 +243,10 @@ export default function Maze() {
 		finishCol.current = Math.floor(Math.random() * 16)
 		finishRow.current = Math.floor(Math.random() * 16)
 
-		// Make sure start and finish are more than 2 nodes aways
+		// Make sure start and finish are more than 5 nodes aways
 		if (
-			Math.abs(startCol.current - finishCol.current) < 2 ||
-			Math.abs(startRow.current - finishRow.current) < 2
+			Math.abs(startCol.current - finishCol.current) < 5 ||
+			Math.abs(startRow.current - finishRow.current) < 5
 		) {
 			getRandStartFinish()
 		}
@@ -242,13 +282,6 @@ export default function Maze() {
 		updateMaze(finishCol.current, finishRow.current, "finish", true)
 	}
 
-	const oppDir = {
-		top: "bottom",
-		bottom: "top",
-		left: "right",
-		right: "left"
-	}
-
 	const [maze, setMaze] = React.useState(mazeInit())
 	const [loadingState, setLoadingState] = React.useState(false)
 
@@ -271,7 +304,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeDfsGen()
+							visualize_dfsGen()
 						}}
 					>
 						Depth First Search
@@ -280,7 +313,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizePrimGen()
+							visualize_primGen()
 						}}
 					>
 						Prim's MST
@@ -289,7 +322,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeDivGen()
+							visualize_divGen()
 						}}
 					>
 						Recursive Division
@@ -301,7 +334,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeDfsSolve()
+							visualize_dfsSolve()
 						}}
 					>
 						Depth First Search
@@ -310,7 +343,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeDijkstras()
+							visualize_dijkstras()
 						}}
 					>
 						Dijkstra's Shortest Path
@@ -319,7 +352,7 @@ export default function Maze() {
 					<button
 						className="maze-button"
 						onClick={() => {
-							visualizeAStar()
+							visualize_aStar()
 						}}
 					>
 						A* Search
@@ -343,9 +376,7 @@ export default function Maze() {
 										right,
 										active,
 										marked,
-										sp,
-										g,
-										f
+										inPath
 									} = node
 									return (
 										<Node
@@ -358,9 +389,7 @@ export default function Maze() {
 											right={right}
 											active={active}
 											marked={marked}
-											sp={sp}
-											g={g}
-											f={f}
+											inPath={inPath}
 										></Node>
 									)
 								})}
@@ -400,12 +429,11 @@ const createNode = (col, row) => {
 		right: false,
 		active: false,
 		marked: false,
-		sp: false,
+		inPath: false,
 		visited: false,
 		distance: Infinity,
-		previousNode: null,
-		g: Infinity,
-		f: Infinity
+		totalDistance: Infinity,
+		previousNode: null
 	}
 }
 
