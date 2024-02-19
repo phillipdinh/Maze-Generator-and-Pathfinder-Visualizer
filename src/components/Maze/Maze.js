@@ -16,8 +16,8 @@ import "./Maze.css"
 	Add algorithm info
     Add Buttons hover
     Add Cancel
-    Pass start and finish nodes instead of col and rows
     Make maze start generation from a random node
+    Change start and finish to icons
 */
 const DELAY_GEN = 2
 const DELAY_SOLVE = 5
@@ -216,7 +216,7 @@ export default function Maze() {
 					updateMaze(c, r, "marked", false)
 					updateMaze(c, r, "active", false)
 				}
-				updateMaze(c, r, "previousNode", null)
+				updateMaze(c, r, "prevNode", null)
 			}
 		}
 	}
@@ -428,7 +428,7 @@ const createNode = (col, row) => {
 		visited: false,
 		distance: Infinity,
 		totalDistance: Infinity,
-		previousNode: null
+		prevNode: null
 	}
 }
 
