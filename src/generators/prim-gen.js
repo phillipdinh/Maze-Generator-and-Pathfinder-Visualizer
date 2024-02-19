@@ -2,47 +2,47 @@ import {
 	getNeighbors,
 	getRand,
 	checkNeighbors,
-	getOppDir,
+	oppDir,
 	getDirection
 } from "../components/Maze/Maze-Helper"
 
 export default function primGen(maze) {
 	function recurse(node) {
 		node.visited = true
-		const validNeighbors = checkNeighbors(node.col, node.row, maze)
+		updateNeighbors(node, openNodes, maze)
 
-		//TODO: update so it uses the previous node prop and clean up neighbor functions
-
-		//Push all valid neighbors with its opposite direction to openNodes
-		//to delete the connected wall from the original node when neighbor is processed
-
-		// Set current node as previous node for all neighbors
-		for (const neighbor of validNeighbors) {
-			neighbor.previousNode = node
-			openNodes.push(neighbor)
-		}
-
-		// Randomly chose and remove nodes from openNodes if it is visited or its prevNode is the border
+		// Randomly chose and remove nodes from openNodes if it is visited
 		do {
 			if (openNodes.length <= 0) return
 
 			var randNode = getRand(openNodes)
-			var prevNode = randNode.previousNode
-			var dirOfPrev = getDirection(randNode, prevNode)
+			var prevNode = randNode.prevNode
+			var dir = getDirection(randNode, prevNode)
 
-			// Remove node from openNodes
-			const index = openNodes.indexOf(randNode)
-			if (index > -1) openNodes.splice(index, 1)
+			removeNode(randNode, openNodes, maze)
 		} while (randNode.visited === true)
 
-		visitedNodes.push([randNode, dirOfPrev])
-		visitedNodes.push([prevNode, getOppDir(dirOfPrev)])
+		visitedNodes.push([randNode, dir])
+		visitedNodes.push([prevNode, oppDir(dir)])
 		return recurse(randNode)
 	}
-
 	const visitedNodes = []
 	const openNodes = []
 	recurse(maze[0][0])
-
 	return visitedNodes
+}
+
+function updateNeighbors(node, openNodes, maze) {
+	const neighbors = checkNeighbors(node.col, node.row, maze)
+	for (const n of neighbors) {
+		n.prevNode = node
+		openNodes.push(n)
+	}
+}
+
+function removeNode(randNode, openNodes) {
+	const index = openNodes.indexOf(randNode)
+	if (index > -1) {
+		openNodes.splice(index, 1)
+	}
 }

@@ -1,28 +1,32 @@
-import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
+import { checkNeighborsSolve, removeRandNode } from "../components/Maze/Maze-Helper"
 export default function dijkstra(startNode, finishNode, maze) {
-	const visitedNodes = []
-
 	startNode.distance = 0
-
-	//TODO: Add randomness to solver
+	const visitedNodes = []
 	const openNodes = getAllNodes(maze)
+
 	while (!!openNodes.length) {
 		openNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
-		const closestNode = openNodes.shift()
+
+		let closestNodes = openNodes.filter(
+			(node) => node.distance === openNodes[0].distance
+		)
+		const closestNode = removeRandNode(closestNodes, openNodes)
 
 		// If the closest node is at a distance of infinity,
 		// we must be trapped and should therefore stop.
-		if (closestNode.distance === Infinity) return visitedNodes
+		if (closestNode.distance === Infinity) {
+			return visitedNodes
+		}
 		closestNode.visited = true
 		visitedNodes.push(closestNode)
 
-		if (closestNode === finishNode) return visitedNodes
-
+		if (closestNode === finishNode) {
+			return visitedNodes
+		}
 		updateUnvisited(closestNode, maze)
 	}
 }
 
-//TODO: update functions to fit syntax of folder
 /////////////////// Helper Functions //////////////////////////
 function getAllNodes(maze) {
 	const nodes = []
@@ -36,10 +40,9 @@ function getAllNodes(maze) {
 
 function updateUnvisited(node, maze) {
 	const validNeighbors = checkNeighborsSolve(node.col, node.row, maze)
-
-	for (const n of validNeighbors) {
-		n.distance = node.distance + 1
-		n.previousNode = node
+	for (const neighbor of validNeighbors) {
+		neighbor.distance = node.distance + 1
+		neighbor.prevNode = node
 	}
 }
 
@@ -50,7 +53,7 @@ export function getShortestPath_dijkstras(finishNode) {
 	let currentNode = finishNode
 	while (currentNode !== null) {
 		nodesInShortestPathOrder.unshift(currentNode)
-		currentNode = currentNode.previousNode
+		currentNode = currentNode.prevNode
 	}
 	return nodesInShortestPathOrder
 }

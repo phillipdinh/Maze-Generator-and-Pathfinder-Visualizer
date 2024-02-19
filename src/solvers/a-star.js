@@ -1,4 +1,4 @@
-import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
+import { checkNeighborsSolve, removeRandNode } from "../components/Maze/Maze-Helper"
 
 export default function aStar(startNode, finishNode, maze) {
 	const openNodes = []
@@ -7,25 +7,28 @@ export default function aStar(startNode, finishNode, maze) {
 	startNode.distance = 0
 	openNodes.push(startNode)
 
-	//TODO: Add randomness to solver and try to implement priority queue
 	while (!!openNodes.length) {
 		openNodes.sort((nodeA, nodeB) => nodeA.totalDistance - nodeB.totalDistance)
 
-		const closestNode = openNodes.shift()
+		let closestNodes = openNodes.filter(
+			(node) => node.totalDistance === openNodes[0].totalDistance
+		)
+		const closestNode = removeRandNode(closestNodes, openNodes)
 		closestNode.visited = true
 		visitedNodes.push(closestNode)
+
 		if (closestNode === finishNode) return visitedNodes
 
 		const neighbors = checkNeighborsSolve(closestNode.col, closestNode.row, maze)
 
-		for (const neighbor of neighbors) {
+		for (const nbr of neighbors) {
 			const distance = closestNode.distance + 1
 
-			if (!isNeighborInOpenNodes(neighbor, openNodes)) {
-				openNodes.unshift(neighbor)
-				updateNeighbor(neighbor, distance, closestNode, finishNode)
-			} else if (distance < neighbor.distance) {
-				updateNeighbor(neighbor, distance, closestNode, finishNode)
+			if (!isNeighborInOpenNodes(nbr, openNodes)) {
+				openNodes.unshift(nbr)
+				updateNeighbor(nbr, distance, closestNode, finishNode)
+			} else if (distance < nbr.distance) {
+				updateNeighbor(nbr, distance, closestNode, finishNode)
 			}
 		}
 	}
@@ -35,7 +38,7 @@ export default function aStar(startNode, finishNode, maze) {
 function updateNeighbor(neighbor, distance, closestNode, finishNode) {
 	neighbor.distance = distance
 	neighbor.totalDistance = distance + getManhattan(neighbor, finishNode)
-	neighbor.previousNode = closestNode
+	neighbor.prevNode = closestNode
 }
 function getManhattan(node, finishNode) {
 	return Math.abs(node.col - finishNode.col) + Math.abs(node.row - finishNode.col)
@@ -55,7 +58,7 @@ export function getShortestPath_aStar(finishNode) {
 
 	while (currentNode !== null) {
 		nodesInShortestPathOrder.unshift(currentNode)
-		currentNode = currentNode.previousNode
+		currentNode = currentNode.prevNode
 	}
 
 	return nodesInShortestPathOrder
