@@ -15,18 +15,21 @@ export function getNeighbors(col, row) {
 /* Given an object neighbors with direction keys and index values
  * return array of unvisited neighbors as directions
  */
-export function checkNeighbors(neighbors, maze) {
-	return Object.keys(neighbors).filter((direction) => {
-		const [c, r] = neighbors[direction]
+export function checkNeighbors(col, row, maze) {
+	const neighbors = getNeighbors(col, row)
+	const validNeighbors = []
 
-		if (c === -1 || r === -1) return false
+	for (const dir in neighbors) {
+		const [c, r] = neighbors[dir]
 
-		if (!maze[c][r].visited) {
-			const validNeighbor = maze[c][r]
-			return validNeighbor
+		if (c === -1 || r === -1) {
+			continue
+		} else if (!maze[c][r].visited) {
+			validNeighbors.push(maze[c][r])
 		}
-		return false
-	})
+	}
+
+	return validNeighbors
 }
 
 /* Similar to checkNeighbors() but also checks if neighbor is blocked by a wall
@@ -67,5 +70,20 @@ export function getOppDir(dir) {
 		return "right"
 	} else if (dir === "right") {
 		return "left"
+	}
+}
+
+export function getDirection(nodeA, nodeB) {
+	const col = nodeA.col - nodeB.col
+	const row = nodeA.row - nodeB.row
+
+	if (col < 0) {
+		return "right"
+	} else if (col > 0) {
+		return "left"
+	} else if (row > 0) {
+		return "top"
+	} else if (row < 0) {
+		return "bottom"
 	}
 }
