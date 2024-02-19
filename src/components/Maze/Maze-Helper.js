@@ -61,7 +61,7 @@ export function getRand(arr) {
 
 /* Return the opposite direction given
  */
-export function getOppDir(dir) {
+export function oppDir(dir) {
 	if (dir === "top") {
 		return "bottom"
 	} else if (dir === "bottom") {
@@ -86,4 +86,14 @@ export function getDirection(nodeA, nodeB) {
 	} else if (row < 0) {
 		return "bottom"
 	}
+}
+
+export function removeRandNode(closest, openNodes) {
+	for (let i = closest.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1))
+		;[closest[i], closest[j]] = [closest[j], closest[i]]
+	}
+	const closestIndex = openNodes.findIndex((node) => node === closest[0])
+
+	return openNodes.splice(closestIndex, 1)[0]
 }
