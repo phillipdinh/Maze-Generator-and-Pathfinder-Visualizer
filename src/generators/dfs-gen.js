@@ -1,8 +1,8 @@
 import {
-	getNeighbors,
 	getRand,
 	checkNeighbors,
-	getOppDir
+	getOppDir,
+	getDirection
 } from "../components/Maze/Maze-Helper"
 
 export default function dfsGen(maze) {
@@ -11,21 +11,21 @@ export default function dfsGen(maze) {
 
 		if (visitedCount < maze.length * maze[0].length) {
 			// Choose a random neighbor
-			const neighbors = getNeighbors(node.col, node.row)
-			const validNeighbors = checkNeighbors(neighbors, maze)
-			const randDir = getRand(validNeighbors)
+			const validNeighbors = checkNeighbors(node.col, node.row, maze)
+			const randNeighbor = getRand(validNeighbors)
 
 			// Add randDir to DFS path if valid
-			if (randDir) {
+			if (randNeighbor) {
 				visitedCount = visitedCount + 1
-				const [nCol, nRow] = neighbors[randDir]
+				//const [nCol, nRow] = neighbors[randDir]
 				stack.push(node)
+				const dir = getDirection(node, randNeighbor)
 
-				visitedNodesInOrder.push([node, [randDir]])
-				visitedNodesInOrder.push([maze[nCol][nRow], getOppDir(randDir)])
-				return backTrack(maze[nCol][nRow])
+				visitedNodes.push([node, dir])
+				visitedNodes.push([randNeighbor, getOppDir(dir)])
+				return backTrack(randNeighbor)
 			}
-			visitedNodesInOrder.push([node])
+			visitedNodes.push([node])
 			// Called when current node has no valid neighbors
 			if (stack.length > 0) {
 				const lastNode = stack.pop()
@@ -35,10 +35,10 @@ export default function dfsGen(maze) {
 		}
 	}
 
-	const visitedNodesInOrder = []
+	const visitedNodes = []
 	const stack = []
 	var visitedCount = 0
 	backTrack(maze[0][0])
 
-	return visitedNodesInOrder
+	return visitedNodes
 }
