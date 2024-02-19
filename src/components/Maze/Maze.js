@@ -17,13 +17,13 @@ import "./Maze.css"
     Add Buttons hover
     Add Cancel
     Pass start and finish nodes instead of col and rows
+    Make maze start generation from a random node
 */
 const DELAY_GEN = 2
 const DELAY_SOLVE = 5
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag) {
-		console.log(visitedNodes)
 		for (let i = 0; i < visitedNodes.length; i++) {
 			const node = visitedNodes[i][0]
 
@@ -46,7 +46,7 @@ export default function Maze() {
 
 	function visualize_dfsGen() {
 		resetMaze()
-		const visitedNodes = dfsGen(startCol.current, startRow.current, maze)
+		const visitedNodes = dfsGen(maze)
 		animateMazeGen(visitedNodes, true)
 	}
 
@@ -59,17 +59,15 @@ export default function Maze() {
 
 	function visualize_primGen() {
 		resetMaze()
-		const visitedNodes = primGen(startCol.current, startRow.current, maze)
+		const visitedNodes = primGen(maze)
 		animateMazeGen(visitedNodes, true)
 	}
 
 	function visualize_dfsSolve() {
 		resetSolve()
 		const visitedNodes = dfsSolve(
-			startCol.current,
-			startRow.current,
-			finishCol.current,
-			finishRow.current,
+			maze[startCol.current][startRow.current],
+			maze[finishCol.current][finishRow.current],
 			maze
 		)
 
@@ -112,10 +110,8 @@ export default function Maze() {
 	function visualize_dijkstras() {
 		resetSolve()
 		const visitedNodes = dijkstra(
-			startCol.current,
-			startRow.current,
-			finishCol.current,
-			finishRow.current,
+			maze[startCol.current][startRow.current],
+			maze[finishCol.current][finishRow.current],
 			maze
 		)
 
@@ -154,10 +150,8 @@ export default function Maze() {
 	function visualize_aStar() {
 		resetSolve()
 		const visitedNodes = aStar(
-			startCol.current,
-			startRow.current,
-			finishCol.current,
-			finishRow.current,
+			maze[startCol.current][startRow.current],
+			maze[finishCol.current][finishRow.current],
 			maze
 		)
 
@@ -222,6 +216,7 @@ export default function Maze() {
 					updateMaze(c, r, "marked", false)
 					updateMaze(c, r, "active", false)
 				}
+				updateMaze(c, r, "previousNode", null)
 			}
 		}
 	}
