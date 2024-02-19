@@ -2,22 +2,22 @@ import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
 
 export default function aStar(startNode, finishNode, maze) {
 	const openNodes = []
-	const visitedNodesInOrder = []
+	const visitedNodes = []
 
 	startNode.distance = 0
 	openNodes.push(startNode)
 
+	//TODO: Add randomness to solver and try to implement priority queue
 	while (!!openNodes.length) {
 		openNodes.sort((nodeA, nodeB) => nodeA.totalDistance - nodeB.totalDistance)
 
 		const closestNode = openNodes.shift()
 		closestNode.visited = true
-		visitedNodesInOrder.push(closestNode)
-		if (closestNode === finishNode) return visitedNodesInOrder
+		visitedNodes.push(closestNode)
+		if (closestNode === finishNode) return visitedNodes
 
 		const neighbors = checkNeighborsSolve(closestNode.col, closestNode.row, maze)
 
-		//TODO Try remove the duplicate code
 		for (const neighbor of neighbors) {
 			const distance = closestNode.distance + 1
 
@@ -29,7 +29,7 @@ export default function aStar(startNode, finishNode, maze) {
 			}
 		}
 	}
-	return visitedNodesInOrder
+	return visitedNodes
 }
 
 function updateNeighbor(neighbor, distance, closestNode, finishNode) {

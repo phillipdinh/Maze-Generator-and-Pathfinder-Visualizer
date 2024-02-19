@@ -9,7 +9,7 @@ export default function dfsSolve(startNode, finishNode, maze) {
 		if (node === finishNode) {
 			return
 		}
-		visitedNodesInOrder.push(node)
+		visitedNodes.push(node)
 
 		// backTrack() and mark node as false if no valid neighbors are found
 		if (visitedCount < maze.length * maze[0].length) {
@@ -21,7 +21,7 @@ export default function dfsSolve(startNode, finishNode, maze) {
 				visitedCount = visitedCount + 1
 				return backTrack(maze[randNeighbor.col][randNeighbor.row], maze)
 			}
-			visitedNodesInOrder.push(false)
+			visitedNodes.push(false)
 
 			if (openNodes.length > 0) {
 				const lastNode = openNodes.pop()
@@ -31,11 +31,11 @@ export default function dfsSolve(startNode, finishNode, maze) {
 		}
 	}
 
-	const visitedNodesInOrder = []
+	const visitedNodes = []
 	const openNodes = []
 	var visitedCount = 0
 
 	backTrack(startNode, maze)
 
-	return visitedNodesInOrder
+	return visitedNodes
 }

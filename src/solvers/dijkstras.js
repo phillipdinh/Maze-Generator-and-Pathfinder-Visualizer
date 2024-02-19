@@ -1,9 +1,10 @@
 import { checkNeighborsSolve } from "../components/Maze/Maze-Helper"
 export default function dijkstra(startNode, finishNode, maze) {
-	const visitedNodesInOrder = []
+	const visitedNodes = []
 
 	startNode.distance = 0
 
+	//TODO: Add randomness to solver
 	const openNodes = getAllNodes(maze)
 	while (!!openNodes.length) {
 		openNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance)
@@ -11,16 +12,17 @@ export default function dijkstra(startNode, finishNode, maze) {
 
 		// If the closest node is at a distance of infinity,
 		// we must be trapped and should therefore stop.
-		if (closestNode.distance === Infinity) return visitedNodesInOrder
+		if (closestNode.distance === Infinity) return visitedNodes
 		closestNode.visited = true
-		visitedNodesInOrder.push(closestNode)
+		visitedNodes.push(closestNode)
 
-		if (closestNode === finishNode) return visitedNodesInOrder
+		if (closestNode === finishNode) return visitedNodes
 
 		updateUnvisited(closestNode, maze)
 	}
 }
 
+//TODO: update functions to fit syntax of folder
 /////////////////// Helper Functions //////////////////////////
 function getAllNodes(maze) {
 	const nodes = []
