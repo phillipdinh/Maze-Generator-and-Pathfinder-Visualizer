@@ -1,4 +1,5 @@
 .node {
+	box-sizing: border-box;
 	border: 1px solid black;
 	background-color: rgba(155, 155, 155, 0.75);
 	aspect-ratio: 1;
@@ -29,7 +30,7 @@
 
 	to {
 		transform: scale(1);
-		background-color: rgb(255, 255, 0);
+		background-color: rgb(255, 255, 150);
 	}
 }
 
