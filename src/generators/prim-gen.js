@@ -1,5 +1,4 @@
 import {
-	getNeighbors,
 	getRand,
 	checkNeighbors,
 	oppDir,
