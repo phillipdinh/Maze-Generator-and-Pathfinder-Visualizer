@@ -25,7 +25,6 @@ const DELAY_SOLVE = 5
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag, callback) {
 		const len = visitedNodes.length
-
 		for (let i = 0; i < len; i++) {
 			const node = visitedNodes[i][0]
 
@@ -35,7 +34,6 @@ export default function Maze() {
 					updateMaze(node.col, node.row, direction, flag)
 				}, DELAY_GEN * i)
 			}
-
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
 					updateMaze(node.col, node.row, "active", true)
@@ -48,21 +46,33 @@ export default function Maze() {
 			callback()
 		}, DELAY_GEN * len)
 	}
+	function animateShortestPath(nodesInShortestPath, callback) {
+		const len = nodesInShortestPath.length
+		for (let i = 0; i < len; i++) {
+			const node = nodesInShortestPath[i]
 
+			if (!ifStartFinish(node.col, node.row)) {
+				setTimeout(() => {
+					setShortestPath(node.col, node.row)
+				}, DELAY_SOLVE * i)
+			}
+		}
+		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
+		setTimeout(() => {
+			callback()
+		}, DELAY_SOLVE * len)
+	}
 	const visualize_dfsGen = (callback) => {
-		console.log("Button clicked!")
 		resetMaze()
 		const visitedNodes = dfsGen(maze)
 		animateMazeGen(visitedNodes, true, callback)
 	}
-
 	const visualize_divGen = (callback) => {
 		resetMaze()
 		delWalls()
 		const visitedNodes = divGen(maze)
 		animateMazeGen(visitedNodes, false, callback)
 	}
-
 	const visualize_primGen = (callback) => {
 		resetMaze()
 		const visitedNodes = primGen(maze)
@@ -76,7 +86,6 @@ export default function Maze() {
 			maze[finishCol.current][finishRow.current],
 			maze
 		)
-
 		const len = visitedNodes.length
 		for (let i = 1; i < len; i++) {
 			if (visitedNodes[i] === false) continue
@@ -99,28 +108,6 @@ export default function Maze() {
 		}, DELAY_SOLVE * len)
 	}
 
-	//TODO make function with AStart
-	function animatePath_dijkstras(callback) {
-		const nodesInShortestPath = getShortestPath_dijkstras(
-			maze[finishCol.current][finishRow.current]
-		)
-
-		const len = nodesInShortestPath.length
-		for (let i = 0; i < len; i++) {
-			const node = nodesInShortestPath[i]
-
-			if (!ifStartFinish(node.col, node.row)) {
-				setTimeout(() => {
-					setShortestPath(node.col, node.row)
-				}, DELAY_SOLVE * i)
-			}
-		}
-		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
-		setTimeout(() => {
-			callback()
-		}, DELAY_SOLVE * len)
-	}
-
 	const visualize_dijkstras = (callback) => {
 		resetSolve()
 		const visitedNodes = dijkstra(
@@ -128,42 +115,10 @@ export default function Maze() {
 			maze[finishCol.current][finishRow.current],
 			maze
 		)
-
-		for (let i = 0; i < visitedNodes.length; i++) {
-			if (i === visitedNodes.length - 1) {
-				setTimeout(() => {
-					animatePath_dijkstras(callback)
-				}, DELAY_SOLVE * i)
-			}
-			const node = visitedNodes[i]
-			if (!ifStartFinish(node.col, node.row)) {
-				setTimeout(() => {
-					stepCount.current = stepCount.current + 1
-					setMarked(node.col, node.row)
-				}, DELAY_SOLVE * i)
-			}
-		}
-	}
-
-	function animatePath_aStar(callback) {
-		const nodesInShortestPath = getShortestPath_aStar(
+		const nodesInShortestPath = getShortestPath_dijkstras(
 			maze[finishCol.current][finishRow.current]
 		)
-
-		const len = nodesInShortestPath.length
-		for (let i = 0; i < len; i++) {
-			const node = nodesInShortestPath[i]
-
-			if (!ifStartFinish(node.col, node.row)) {
-				setTimeout(() => {
-					setShortestPath(node.col, node.row)
-				}, DELAY_SOLVE * i)
-			}
-		}
-		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
-		setTimeout(() => {
-			callback()
-		}, DELAY_SOLVE * len)
+		markNodes(visitedNodes.length, visitedNodes, nodesInShortestPath, callback)
 	}
 	const visualize_aStar = (callback) => {
 		resetSolve()
@@ -172,13 +127,17 @@ export default function Maze() {
 			maze[finishCol.current][finishRow.current],
 			maze
 		)
+		const nodesInShortestPath = getShortestPath_aStar(
+			maze[finishCol.current][finishRow.current]
+		)
+		markNodes(visitedNodes.length, visitedNodes, nodesInShortestPath, callback)
+	}
 
-		for (let i = 0; i < visitedNodes.length; i++) {
-			if (i === visitedNodes.length - 1) {
-				setTimeout(() => {
-					animatePath_aStar(callback)
-				}, DELAY_SOLVE * i)
-			}
+	/* Used by visualize_dijkstras and visualize_aStar
+	 *
+	 */
+	function markNodes(len, visitedNodes, nodesInShortestPath, callback) {
+		for (let i = 0; i < len; i++) {
 			const node = visitedNodes[i]
 			if (!ifStartFinish(node.col, node.row)) {
 				setTimeout(() => {
@@ -187,6 +146,9 @@ export default function Maze() {
 				}, DELAY_SOLVE * i)
 			}
 		}
+		setTimeout(() => {
+			animateShortestPath(nodesInShortestPath, callback)
+		}, DELAY_SOLVE * len)
 	}
 
 	function updateMaze(col, row, prop, update) {
@@ -226,7 +188,6 @@ export default function Maze() {
 	function resetSolve() {
 		setLoadingState(true)
 		stepCount.current = 0
-
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
 				if (!ifStartFinish(c, r)) {
