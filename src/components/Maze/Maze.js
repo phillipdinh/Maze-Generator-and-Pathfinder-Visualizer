@@ -6,7 +6,6 @@ import Loading from "../Loading"
 import dijkstra, { getShortestPath_dijkstras } from "../../solvers/dijkstras"
 import aStar, { getShortestPath_aStar } from "../../solvers/a-star"
 import dfsSolve from "../../solvers/dfs-solve"
-
 import dfsGen from "../../generators/dfs-gen"
 import divGen from "../../generators/div-gen"
 import primGen from "../../generators/prim-gen"
@@ -15,11 +14,12 @@ import "./Maze.css"
 
 /*TODO:
 	Add algorithm info
-    Add Cancel
     Add header
+    Delete react stuff
+    Add button shadows
 */
-const DELAY_GEN = 2
-const DELAY_SOLVE = 12
+const DELAY_GEN = 8
+const DELAY_SOLVE = 14
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag, callback) {
@@ -315,9 +315,9 @@ export default function Maze() {
                         <p className="step-text"> {stepCount.current}</p>
                     </div>
                 </div>
-                {loadingState && <Loading className="loading-overlay"/>}
-                {!generatedState && <div className="warning">Please generate maze first!</div>}
 			</div>
+            {loadingState && <Loading className="loading-overlay"/>}
+            {!generatedState && <div className="warning">Please generate maze first!</div>}
 			<div className="maze-div">
 				<div style={styles} className="maze">
 					{maze.map((block, rowIdx) => {
