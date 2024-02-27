@@ -70,10 +70,10 @@
 	font-size: 20px;
 	font-weight: bold;
 	height: 36px;
-	width: 120px;
+	width: 110px;
 	border: 0;
 	border-radius: 20px;
-	margin-left: 10px;
+	margin-left: 12px;
 	background-color: #ee4b2b;
 	color: white;
 }
@@ -88,7 +88,7 @@
 	width: 120px;
 	font-size: 20px;
 	font-weight: bold;
-	margin-left: 20px;
+	margin-left: 32px;
 }
 .step-text {
 	color: #007fff;
