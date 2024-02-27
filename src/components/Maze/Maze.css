@@ -1,74 +1,93 @@
 .maze {
-	width: 40%;
-	margin-right: 10%;
-	border: 4px solid rgb(175, 216, 248);
+	width: 720px;
+	border: 4px solid #353935;
 }
 .maze-container {
 	display: flex;
+	justify-content: center;
+	align-items: flex-start;
 }
 .maze-div {
-	padding-top: 40px;
-	flex: 1;
-	margin-left: auto;
-	margin-right: auto;
+	margin-top: 40px;
+	margin-right: 15%;
 }
-.maze-button-header {
-	font-size: 20px;
+
+.buttons-div {
+	display: flex;
+	width: 260px;
+	margin-top: 40px;
+	margin-right: 1%;
+	border: 1px solid #444;
+	border-radius: 4px;
+	background-color: #fafafa;
+}
+.buttons-header {
+	color: #222222;
+	font-size: 24px;
 	font-weight: bold;
 	margin-top: 8px;
-	margin-bottom: 8px;
-}
-.maze-button-div {
-	display: flex;
-	margin-top: 40px;
-	margin-left: 2%;
-	max-height: 240px;
-	max-width: 272px;
-	border: 1px solid #444;
-	border-radius: 5px;
-	background-color: snow;
+	margin-bottom: 2px;
 }
 
-.maze-generate-div,
-.maze-solve-div {
+.buttons-column {
 	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin: 5px;
 }
 
-.maze-button {
-	font-size: 16px;
-	height: 60px;
+.button {
+	font-family: "Montserrat", sans-serif;
+}
+.alg-button:hover {
+	background-color: #007fff70;
+	color: white;
+	border: 0;
+}
+.alg-button.selected {
+	background-color: #4169e1;
+	color: white;
+	border: 0;
+}
+.alg-button {
+	font-size: 18px;
+	font-weight: 500;
+	height: 40px;
 	width: 120px;
-	margin-bottom: 6px;
-	border: 1px solid gray;
+	background-color: white;
+	border: 1px solid #333333;
+	color: #333333;
 	border-radius: 5px;
+	margin-bottom: 6px;
 }
 
-.clear-maze-button {
-	position: relative;
-	top: 40px;
-	right: 50%;
+.footer {
+	position: absolute;
+	top: 240px;
+	display: flex;
+}
+.reset-button {
 	font-size: 20px;
 	font-weight: bold;
 	height: 40px;
 	width: 120px;
-	margin-top: 6px;
 	border: 1px solid gray;
 	border-radius: 5px;
+	margin-left: 5px;
 }
 
 .step-count {
-	position: relative;
-	left: 48%;
+	display: flex;
+	align-items: center;
 	height: 40px;
 	width: 120px;
 	font-size: 24px;
 	font-weight: bold;
+	margin-left: 12px;
 }
 .step-text {
-	position: absolute;
-	top: 0;
-	left: 82%;
-	color: rgb(255, 0, 0);
+	color: #ef3e36;
 	margin: 0;
 }
 
