@@ -8,14 +8,14 @@
 	align-items: flex-start;
 }
 .maze-div {
-	margin-top: 40px;
+	margin-top: 32px;
 	margin-right: 15%;
 }
 
 .buttons-div {
 	display: flex;
 	width: 276px;
-	margin-top: 40px;
+	margin-top: 32px;
 	margin-right: 1%;
 	border: 1px solid #353935;
 	border-radius: 4px;
@@ -63,7 +63,7 @@
 
 .footer {
 	position: absolute;
-	top: 240px;
+	top: 288px;
 	display: flex;
 }
 .reset-button {
@@ -106,8 +106,10 @@
 
 .warning {
 	position: absolute;
-	top: 20px;
-	left: 320px;
-	font-weight: 500;
+	top: 70px;
+	left: 50%;
+	transform: translateX(-50%);
+	font-size: 18px;
+	font-weight: 600;
 	color: #222222;
 }
