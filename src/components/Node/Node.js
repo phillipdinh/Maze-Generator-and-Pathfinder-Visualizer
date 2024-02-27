@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import "./Node.css"
 import classnames from "classnames"
 
@@ -18,7 +18,7 @@ export default function Node(props) {
 		paddingRight: props.right ? "2px" : 0
 	}
 
-	const [id] = React.useState(`node-${props.col}-${props.row}`)
+	const [id] = useState(`node-${props.col}-${props.row}`)
 
 	const classNames = classnames({
 		node: true,
