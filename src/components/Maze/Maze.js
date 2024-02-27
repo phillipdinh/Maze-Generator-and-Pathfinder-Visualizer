@@ -1,5 +1,6 @@
 import React from "react"
 import Node from "../Node/Node"
+import Button from "../Button/Button"
 
 import dijkstra, { getShortestPath_dijkstras } from "../../solvers/dijkstras"
 import aStar, { getShortestPath_aStar } from "../../solvers/a-star"
@@ -16,19 +17,20 @@ import "./Maze.css"
     Add Buttons hover
     Add Cancel
     Add errors
-    Change buttons container to match maze on zoom
+    Add header
 */
-const DELAY_GEN = 4
-const DELAY_SOLVE = 12
+const DELAY_GEN = 2
+const DELAY_SOLVE = 5
 
 export default function Maze() {
-	function animateMazeGen(visitedNodes, flag) {
-		for (let i = 0; i < visitedNodes.length; i++) {
+	function animateMazeGen(visitedNodes, flag, callback) {
+		const len = visitedNodes.length
+
+		for (let i = 0; i < len; i++) {
 			const node = visitedNodes[i][0]
 
 			if (visitedNodes[i][1]) {
 				const direction = visitedNodes[i][1]
-
 				setTimeout(() => {
 					updateMaze(node.col, node.row, direction, flag)
 				}, DELAY_GEN * i)
@@ -41,28 +43,33 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_GEN, visitedNodes.length)
+
+		setTimeout(() => {
+			callback()
+		}, DELAY_GEN * len)
 	}
 
-	function visualize_dfsGen() {
+	const visualize_dfsGen = (callback) => {
+		console.log("Button clicked!")
 		resetMaze()
 		const visitedNodes = dfsGen(maze)
-		animateMazeGen(visitedNodes, true)
+		animateMazeGen(visitedNodes, true, callback)
 	}
 
-	function visualize_divGen() {
+	const visualize_divGen = (callback) => {
 		resetMaze()
 		delWalls()
 		const visitedNodes = divGen(maze)
-		animateMazeGen(visitedNodes, false)
+		animateMazeGen(visitedNodes, false, callback)
 	}
 
-	function visualize_primGen() {
+	const visualize_primGen = (callback) => {
 		resetMaze()
 		const visitedNodes = primGen(maze)
-		animateMazeGen(visitedNodes, true)
+		animateMazeGen(visitedNodes, true, callback)
 	}
 
-	function visualize_dfsSolve() {
+	const visualize_dfsSolve = (callback) => {
 		resetSolve()
 		const visitedNodes = dfsSolve(
 			maze[startCol.current][startRow.current],
@@ -87,14 +94,19 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_SOLVE, visitedNodes.length)
+		setTimeout(() => {
+			callback()
+		}, DELAY_SOLVE * len)
 	}
 
-	function animatePath_dijkstras() {
+	//TODO make function with AStart
+	function animatePath_dijkstras(callback) {
 		const nodesInShortestPath = getShortestPath_dijkstras(
 			maze[finishCol.current][finishRow.current]
 		)
 
-		for (let i = 0; i < nodesInShortestPath.length; i++) {
+		const len = nodesInShortestPath.length
+		for (let i = 0; i < len; i++) {
 			const node = nodesInShortestPath[i]
 
 			if (!ifStartFinish(node.col, node.row)) {
@@ -104,9 +116,12 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
+		setTimeout(() => {
+			callback()
+		}, DELAY_SOLVE * len)
 	}
 
-	function visualize_dijkstras() {
+	const visualize_dijkstras = (callback) => {
 		resetSolve()
 		const visitedNodes = dijkstra(
 			maze[startCol.current][startRow.current],
@@ -117,7 +132,7 @@ export default function Maze() {
 		for (let i = 0; i < visitedNodes.length; i++) {
 			if (i === visitedNodes.length - 1) {
 				setTimeout(() => {
-					animatePath_dijkstras()
+					animatePath_dijkstras(callback)
 				}, DELAY_SOLVE * i)
 			}
 			const node = visitedNodes[i]
@@ -130,12 +145,13 @@ export default function Maze() {
 		}
 	}
 
-	function animatePath_aStar() {
+	function animatePath_aStar(callback) {
 		const nodesInShortestPath = getShortestPath_aStar(
 			maze[finishCol.current][finishRow.current]
 		)
 
-		for (let i = 0; i < nodesInShortestPath.length; i++) {
+		const len = nodesInShortestPath.length
+		for (let i = 0; i < len; i++) {
 			const node = nodesInShortestPath[i]
 
 			if (!ifStartFinish(node.col, node.row)) {
@@ -145,8 +161,11 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
+		setTimeout(() => {
+			callback()
+		}, DELAY_SOLVE * len)
 	}
-	function visualize_aStar() {
+	const visualize_aStar = (callback) => {
 		resetSolve()
 		const visitedNodes = aStar(
 			maze[startCol.current][startRow.current],
@@ -157,7 +176,7 @@ export default function Maze() {
 		for (let i = 0; i < visitedNodes.length; i++) {
 			if (i === visitedNodes.length - 1) {
 				setTimeout(() => {
-					animatePath_aStar()
+					animatePath_aStar(callback)
 				}, DELAY_SOLVE * i)
 			}
 			const node = visitedNodes[i]
@@ -296,42 +315,25 @@ export default function Maze() {
 			<div className="buttons-div">
 				<div className="buttons-column">
 					<p className="buttons-header">Generate</p>
-					<button className="alg-button" onClick={() => {visualize_dfsGen()}}>
-						DFS
-					</button>
-
-					<button className="alg-button" onClick={() => {visualize_primGen()}}>
-						Prim's
-					</button>
-
-					<button className="alg-button" onClick={() => {visualize_divGen()}}>
-						Division
-					</button>
+                    <Button className="alg-button" onClick={visualize_dfsGen} label="DFS"/>
+                    <Button className="alg-button" onClick={visualize_primGen} label="Prim's"/>
+                    <Button className="alg-button" onClick={visualize_divGen} label="Division"/>
 				</div>
-
 				<div className="buttons-column">
 					<p className="buttons-header">Solve</p>
-					<button className="alg-button" onClick={() => {visualize_dfsSolve()}}>
-						DFS
-					</button>
-
-					<button className="alg-button" onClick={() => {visualize_dijkstras()}}>
-						Dijkstra's
-					</button>
-
-					<button className="alg-button" onClick={() => {visualize_aStar()}}>
-						A* Search
-					</button>
+                    <Button className="alg-button" onClick={visualize_dfsSolve} label="DFS"/>
+                    <Button className="alg-button" onClick={visualize_dijkstras} label="Dijkstra's"/>
+                    <Button className="alg-button" onClick={visualize_aStar} label="A* Search"/>
 				</div>
                 <div className="footer">
                     <button
-                        className="clear-button"
+                        className="reset-button"
                         onClick={() => {
-                            resetMaze()
+                            resetMaze() 
                             setLoadingState(false)
                         }}
                     >
-                        Clear Maze
+                        Reset
                     </button>
 
                     <div className="step-count">
