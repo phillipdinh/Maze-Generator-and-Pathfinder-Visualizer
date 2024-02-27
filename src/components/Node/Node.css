@@ -15,7 +15,7 @@
 
 .node-marked {
 	animation-name: markedAnimation;
-	animation-duration: 0.75s;
+	animation-duration: 0.5s;
 	animation-timing-function: ease;
 	animation-direction: normal;
 	animation-iteration-count: 1;
@@ -31,7 +31,7 @@
 
 	to {
 		transform: scale(1);
-		background-color: #dda0dd80;
+		background-color: #dda0dd50;
 	}
 }
 
@@ -58,7 +58,7 @@
 
 .node-active {
 	animation-name: generateWalls;
-	animation-duration: 0.1s;
+	animation-duration: 0.2s;
 	animation-direction: normal;
 	animation-timing-function: linear;
 	animation-iteration-count: 1;
