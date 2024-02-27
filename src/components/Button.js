@@ -1,8 +1,8 @@
-import React from "react"
+import React, { useState } from "react"
 
 function Button(props) {
 	// Define state to track whether the button is active or not
-	const [isSelected, setIsSelected] = React.useState(false)
+	const [isSelected, setIsSelected] = useState(false)
 
 	const combinedClassName = [props.className, isSelected ? "selected" : ""].join(" ")
 
