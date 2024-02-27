@@ -14,19 +14,19 @@
 
 .buttons-div {
 	display: flex;
-	width: 260px;
+	width: 276px;
 	margin-top: 40px;
 	margin-right: 1%;
-	border: 1px solid #444;
+	border: 1px solid #353935;
 	border-radius: 4px;
-	background-color: #fafafa;
+	background-color: #e5e4e2;
 }
 .buttons-header {
 	color: #222222;
 	font-size: 24px;
 	font-weight: bold;
-	margin-top: 8px;
-	margin-bottom: 2px;
+	margin-top: 6px;
+	margin-bottom: 4px;
 }
 
 .buttons-column {
@@ -34,14 +34,13 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin: 5px;
 }
 
 .button {
 	font-family: "Montserrat", sans-serif;
 }
 .alg-button:hover {
-	background-color: #007fff70;
+	background-color: #4169e170;
 	color: white;
 	border: 0;
 }
@@ -51,15 +50,15 @@
 	border: 0;
 }
 .alg-button {
-	font-size: 18px;
+	font-size: 20px;
 	font-weight: 500;
-	height: 40px;
+	height: 36px;
 	width: 120px;
 	background-color: white;
-	border: 1px solid #333333;
-	color: #333333;
+	border: 1px solid #353935;
+	color: #353935;
 	border-radius: 5px;
-	margin-bottom: 6px;
+	margin-bottom: 10px;
 }
 
 .footer {
@@ -70,25 +69,30 @@
 .reset-button {
 	font-size: 20px;
 	font-weight: bold;
-	height: 40px;
+	height: 36px;
 	width: 120px;
-	border: 1px solid gray;
-	border-radius: 5px;
-	margin-left: 5px;
+	border: 0;
+	border-radius: 20px;
+	margin-left: 10px;
+	background-color: #ee4b2b;
+	color: white;
+}
+.reset-button:hover {
+	background-color: #ff2400;
 }
 
 .step-count {
 	display: flex;
 	align-items: center;
-	height: 40px;
+	height: 36px;
 	width: 120px;
-	font-size: 24px;
+	font-size: 20px;
 	font-weight: bold;
-	margin-left: 12px;
+	margin-left: 20px;
 }
 .step-text {
-	color: #ef3e36;
-	margin: 0;
+	color: #007fff;
+	margin-left: 4px;
 }
 
 .loading-overlay {
@@ -97,6 +101,13 @@
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(0, 0, 0, 0.1);
 	z-index: 1;
+}
+
+.warning {
+	position: absolute;
+	top: 20px;
+	left: 320px;
+	font-weight: 500;
+	color: #222222;
 }
