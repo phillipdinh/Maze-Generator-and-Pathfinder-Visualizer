@@ -20,6 +20,7 @@
 	border: 1px solid #353935;
 	border-radius: 4px;
 	background-color: #e5e4e2;
+	box-shadow: -2px 6px 8px rgba(0, 0, 0, 0.16);
 }
 .buttons-header {
 	color: #222222;
@@ -39,16 +40,6 @@
 .button {
 	font-family: "Montserrat", sans-serif;
 }
-.alg-button:hover {
-	background-color: #4169e170;
-	color: white;
-	border: 0;
-}
-.alg-button.selected {
-	background-color: #4169e1;
-	color: white;
-	border: 0;
-}
 .alg-button {
 	font-size: 20px;
 	font-weight: 500;
@@ -60,7 +51,17 @@
 	border-radius: 5px;
 	margin-bottom: 10px;
 }
-
+.alg-button:hover {
+	background-color: #4169e170;
+	color: white;
+	border: 0;
+	box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.2);
+}
+.alg-button.selected {
+	background-color: #4169e1;
+	color: white;
+	border: 0;
+}
 .footer {
 	position: absolute;
 	top: 288px;
@@ -76,9 +77,11 @@
 	margin-left: 12px;
 	background-color: #ee4b2b;
 	color: white;
+	box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.2);
 }
 .reset-button:hover {
 	background-color: #ff2400;
+	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.18);
 }
 
 .step-count {
@@ -89,6 +92,7 @@
 	font-size: 20px;
 	font-weight: bold;
 	margin-left: 32px;
+	color: #222222;
 }
 .step-text {
 	color: #007fff;
