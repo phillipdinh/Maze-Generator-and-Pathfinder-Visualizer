@@ -12,15 +12,14 @@ import primGen from "../../generators/prim-gen"
 import "./Maze.css"
 
 /*TODO:
-	Change UI
 	Add algorithm info
     Add Buttons hover
     Add Cancel
-    Make maze start generation from a random node
-    Change start and finish to icons
+    Add errors
+    Change buttons container to match maze on zoom
 */
-const DELAY_GEN = 2
-const DELAY_SOLVE = 5
+const DELAY_GEN = 4
+const DELAY_SOLVE = 12
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag) {
@@ -291,68 +290,56 @@ export default function Maze() {
 		gridTemplateColumns: `repeat(${16}, 1fr)`
 	}
 
+	// prettier-ignore
 	return (
 		<div className="maze-container">
-			<div className="maze-button-div">
-				<div className="maze-generate-div">
-					<p className="maze-button-header">Generate</p>
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_dfsGen()
-						}}
-					>
-						Depth First Search
+			<div className="buttons-div">
+				<div className="buttons-column">
+					<p className="buttons-header">Generate</p>
+					<button className="alg-button" onClick={() => {visualize_dfsGen()}}>
+						DFS
 					</button>
 
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_primGen()
-						}}
-					>
-						Prim's MST
+					<button className="alg-button" onClick={() => {visualize_primGen()}}>
+						Prim's
 					</button>
 
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_divGen()
-						}}
-					>
-						Recursive Division
+					<button className="alg-button" onClick={() => {visualize_divGen()}}>
+						Division
 					</button>
 				</div>
 
-				<div className="maze-solve-div">
-					<p className="maze-button-header">Solve</p>
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_dfsSolve()
-						}}
-					>
-						Depth First Search
+				<div className="buttons-column">
+					<p className="buttons-header">Solve</p>
+					<button className="alg-button" onClick={() => {visualize_dfsSolve()}}>
+						DFS
 					</button>
 
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_dijkstras()
-						}}
-					>
-						Dijkstra's Shortest Path
+					<button className="alg-button" onClick={() => {visualize_dijkstras()}}>
+						Dijkstra's
 					</button>
 
-					<button
-						className="maze-button"
-						onClick={() => {
-							visualize_aStar()
-						}}
-					>
+					<button className="alg-button" onClick={() => {visualize_aStar()}}>
 						A* Search
 					</button>
 				</div>
+                <div className="footer">
+                    <button
+                        className="clear-button"
+                        onClick={() => {
+                            resetMaze()
+                            setLoadingState(false)
+                        }}
+                    >
+                        Clear Maze
+                    </button>
+
+                    <div className="step-count">
+                        Steps:
+                        <p className="step-text"> {stepCount.current}</p>
+                    </div>
+                </div>
+                
 				{loadingState && <div className="loading-overlay"></div>}
 			</div>
 
@@ -391,21 +378,6 @@ export default function Maze() {
 							</div>
 						)
 					})}
-				</div>
-
-				<button
-					className="clear-maze-button"
-					onClick={() => {
-						resetMaze()
-						setLoadingState(false)
-					}}
-				>
-					Clear Maze
-				</button>
-
-				<div className="step-count">
-					Steps:
-					<p className="step-text"> {stepCount.current}</p>
 				</div>
 			</div>
 		</div>
