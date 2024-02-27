@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useState, useRef } from "react"
 import Node from "../Node/Node"
-import Button from "../Button/Button"
+import Button from "../Button"
+import Loading from "../Loading"
 
 import dijkstra, { getShortestPath_dijkstras } from "../../solvers/dijkstras"
 import aStar, { getShortestPath_aStar } from "../../solvers/a-star"
@@ -14,13 +15,11 @@ import "./Maze.css"
 
 /*TODO:
 	Add algorithm info
-    Add Buttons hover
     Add Cancel
-    Add errors
     Add header
 */
 const DELAY_GEN = 2
-const DELAY_SOLVE = 5
+const DELAY_SOLVE = 12
 
 export default function Maze() {
 	function animateMazeGen(visitedNodes, flag, callback) {
@@ -41,7 +40,7 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_GEN, visitedNodes.length)
-
+		setGeneratedState(true)
 		setTimeout(() => {
 			callback()
 		}, DELAY_GEN * len)
@@ -58,6 +57,29 @@ export default function Maze() {
 			}
 		}
 		resetVisited(DELAY_SOLVE, nodesInShortestPath.length)
+		setGeneratedState(true)
+		setTimeout(() => {
+			callback()
+		}, DELAY_SOLVE * len)
+	}
+	function animateDFSSolve(visitedNodes, callback) {
+		const len = visitedNodes.length
+		for (let i = 1; i < len; i++) {
+			if (visitedNodes[i] === false) continue
+			const node = visitedNodes[i]
+
+			setTimeout(() => {
+				stepCount.current = stepCount.current + 1
+				setShortestPath(node.col, node.row)
+			}, DELAY_SOLVE * i)
+
+			if (i < len - 1 && visitedNodes[i + 1] === false) {
+				setTimeout(() => {
+					setMarked(node.col, node.row)
+				}, DELAY_SOLVE * i)
+			}
+		}
+		resetVisited(DELAY_SOLVE, visitedNodes.length)
 		setTimeout(() => {
 			callback()
 		}, DELAY_SOLVE * len)
@@ -80,63 +102,57 @@ export default function Maze() {
 	}
 
 	const visualize_dfsSolve = (callback) => {
+		if (!generatedState) {
+			callback()
+			return
+		}
 		resetSolve()
 		const visitedNodes = dfsSolve(
-			maze[startCol.current][startRow.current],
-			maze[finishCol.current][finishRow.current],
+			maze[start.current.col][start.current.row],
+			maze[finish.current.col][finish.current.row],
 			maze
 		)
-		const len = visitedNodes.length
-		for (let i = 1; i < len; i++) {
-			if (visitedNodes[i] === false) continue
-			const node = visitedNodes[i]
-
-			setTimeout(() => {
-				stepCount.current = stepCount.current + 1
-				setShortestPath(node.col, node.row)
-			}, DELAY_SOLVE * i)
-
-			if (i < len - 1 && visitedNodes[i + 1] === false) {
-				setTimeout(() => {
-					setMarked(node.col, node.row)
-				}, DELAY_SOLVE * i)
-			}
-		}
-		resetVisited(DELAY_SOLVE, visitedNodes.length)
-		setTimeout(() => {
-			callback()
-		}, DELAY_SOLVE * len)
+		animateDFSSolve(visitedNodes, callback)
 	}
 
 	const visualize_dijkstras = (callback) => {
+		if (!generatedState) {
+			callback()
+			return
+		}
 		resetSolve()
 		const visitedNodes = dijkstra(
-			maze[startCol.current][startRow.current],
-			maze[finishCol.current][finishRow.current],
+			maze[start.current.col][start.current.row],
+			maze[finish.current.col][finish.current.row],
 			maze
 		)
 		const nodesInShortestPath = getShortestPath_dijkstras(
-			maze[finishCol.current][finishRow.current]
+			maze[finish.current.col][finish.current.row]
 		)
-		markNodes(visitedNodes.length, visitedNodes, nodesInShortestPath, callback)
+		markNodes(visitedNodes, nodesInShortestPath, callback)
 	}
 	const visualize_aStar = (callback) => {
+		if (!generatedState) {
+			callback()
+			return
+		}
 		resetSolve()
 		const visitedNodes = aStar(
-			maze[startCol.current][startRow.current],
-			maze[finishCol.current][finishRow.current],
+			maze[start.current.col][start.current.row],
+			maze[finish.current.col][finish.current.row],
 			maze
 		)
 		const nodesInShortestPath = getShortestPath_aStar(
-			maze[finishCol.current][finishRow.current]
+			maze[finish.current.col][finish.current.row]
 		)
-		markNodes(visitedNodes.length, visitedNodes, nodesInShortestPath, callback)
+		markNodes(visitedNodes, nodesInShortestPath, callback)
 	}
 
 	/* Used by visualize_dijkstras and visualize_aStar
 	 *
 	 */
-	function markNodes(len, visitedNodes, nodesInShortestPath, callback) {
+	function markNodes(visitedNodes, nodesInShortestPath, callback) {
+		const len = visitedNodes.length
 		for (let i = 0; i < len; i++) {
 			const node = visitedNodes[i]
 			if (!ifStartFinish(node.col, node.row)) {
@@ -212,15 +228,15 @@ export default function Maze() {
 	}
 
 	function getRandStartFinish() {
-		startCol.current = Math.floor(Math.random() * 16)
-		startRow.current = Math.floor(Math.random() * 16)
-		finishCol.current = Math.floor(Math.random() * 16)
-		finishRow.current = Math.floor(Math.random() * 16)
+		start.current.col = Math.floor(Math.random() * 16)
+		start.current.row = Math.floor(Math.random() * 16)
+		finish.current.col = Math.floor(Math.random() * 16)
+		finish.current.row = Math.floor(Math.random() * 16)
 
 		// Make sure start and finish are more than 5 nodes aways
 		if (
-			Math.abs(startCol.current - finishCol.current) < 5 ||
-			Math.abs(startRow.current - finishRow.current) < 5
+			Math.abs(start.current.col - finish.current.col) < 5 ||
+			Math.abs(start.current.row - finish.current.row) < 5
 		) {
 			getRandStartFinish()
 		}
@@ -228,8 +244,8 @@ export default function Maze() {
 
 	function ifStartFinish(col, row) {
 		if (
-			(col === startCol.current && row === startRow.current) ||
-			(col === finishCol.current && row === finishRow.current)
+			(col === start.current.col && row === start.current.row) ||
+			(col === finish.current.col && row === finish.current.row)
 		) {
 			return true
 		} else {
@@ -239,11 +255,10 @@ export default function Maze() {
 
 	function resetMaze() {
 		setLoadingState(true)
+		setGeneratedState(false)
 		getRandStartFinish()
 		stepCount.current = 0
-
 		const newMaze = mazeInit()
-
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
 				let copyMaze = [...maze]
@@ -251,19 +266,17 @@ export default function Maze() {
 				setMaze(copyMaze)
 			}
 		}
-
-		updateMaze(startCol.current, startRow.current, "start", true)
-		updateMaze(finishCol.current, finishRow.current, "finish", true)
+		updateMaze(start.current.col, start.current.row, "start", true)
+		updateMaze(finish.current.col, finish.current.row, "finish", true)
 	}
 
-	const [maze, setMaze] = React.useState(mazeInit())
-	const [loadingState, setLoadingState] = React.useState(false)
+	const [maze, setMaze] = useState(mazeInit())
+	const [loadingState, setLoadingState] = useState(false)
+	const [generatedState, setGeneratedState] = useState(false)
 
-	const stepCount = React.useRef(0)
-	const startCol = React.useRef(0)
-	const startRow = React.useRef(0)
-	const finishCol = React.useRef(0)
-	const finishRow = React.useRef(0)
+	const stepCount = useRef(0)
+	const start = useRef({ col: 0, row: 0 })
+	const finish = useRef({ col: 0, row: 0 })
 
 	const styles = {
 		display: "inline-grid",
@@ -302,10 +315,9 @@ export default function Maze() {
                         <p className="step-text"> {stepCount.current}</p>
                     </div>
                 </div>
-                
-				{loadingState && <div className="loading-overlay"></div>}
+                {loadingState && <Loading className="loading-overlay"/>}
+                {!generatedState && <div className="warning">Please generate maze first!</div>}
 			</div>
-
 			<div className="maze-div">
 				<div style={styles} className="maze">
 					{maze.map((block, rowIdx) => {
@@ -346,7 +358,6 @@ export default function Maze() {
 		</div>
 	)
 }
-
 const createNode = (col, row) => {
 	return {
 		col,
@@ -366,7 +377,6 @@ const createNode = (col, row) => {
 		prevNode: null
 	}
 }
-
 const mazeInit = () => {
 	const grid = []
 	for (let c = 0; c < 16; c++) {
