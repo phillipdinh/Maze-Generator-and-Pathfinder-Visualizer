@@ -1,13 +1,11 @@
 # Maze Generator and Pathfinder Visualizer using React
 
-This maze project provides algorithms to choose from that will animate their path for generating walls or finding the path from start to finish.
+This project renders a maze using React and provides algorithms to choose from that will animate their path for generating walls or finding the path from start to finish.
 
-## Installation
-
-Clone repository and install its dependencies.
+## Install Dependencies
 
 ```bash
-    npm run setup
+    npm install
 ```
 
 ## Run Project
@@ -22,7 +20,7 @@ Clone repository and install its dependencies.
 -   Recursive Division
 -   Prim's Algorithm
 
-https://github.com/phillipdinh/maze-2/assets/64246241/8801779d-fdd3-4010-a802-90980d618592
+![](https://github.com/phillipdinh/maze-2/blob/master/demo/generator.gif)
 
 ## Pathfinder Algorithms
 
@@ -30,7 +28,7 @@ https://github.com/phillipdinh/maze-2/assets/64246241/8801779d-fdd3-4010-a802-90
 -   Dijkstra's Algorithm
 -   A\* Search Algorithm
 
-https://github.com/phillipdinh/maze-2/assets/64246241/dbd3873f-96ef-44a3-960b-3c3255caa710
+![](https://github.com/phillipdinh/maze-2/blob/master/demo/solver.gif)
 
 ## Maze Component
 
