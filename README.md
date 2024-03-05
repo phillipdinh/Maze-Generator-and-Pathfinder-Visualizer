@@ -22,11 +22,15 @@ Clone repository and install its dependencies.
 -   Recursive Division
 -   Prim's Algorithm
 
+https://github.com/phillipdinh/maze-2/assets/64246241/8801779d-fdd3-4010-a802-90980d618592
+
 ## Pathfinder Algorithms
 
 -   Depth First Search
 -   Dijkstra's Algorithm
 -   A\* Search Algorithm
+
+https://github.com/phillipdinh/maze-2/assets/64246241/dbd3873f-96ef-44a3-960b-3c3255caa710
 
 ## Maze Component
 
