@@ -1,6 +1,7 @@
 # Maze Generator and Pathfinder Visualizer using React
 
-This project renders a maze using React and provides algorithms to choose from that will animate their path for generating walls or finding the path from start to finish.
+This project renders a maze using React and provides algorithms to choose from.
+When chosen the algorithms will traverse the maze to either generate the maze walls or show the path to the end.
 
 ## Install Dependencies
 
@@ -9,6 +10,8 @@ This project renders a maze using React and provides algorithms to choose from t
 ```
 
 ## Run Project
+
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 ```bash
     npm start
@@ -20,7 +23,7 @@ This project renders a maze using React and provides algorithms to choose from t
 -   Recursive Division
 -   Prim's Algorithm
 
-![](https://github.com/phillipdinh/maze-2/blob/master/demo/generator.gif)
+![](https://github.com/phillipdinh/Maze-Generator-and-Pathfinder-Visualizer/blob/master/demo/generator.gif)
 
 ## Pathfinder Algorithms
 
@@ -28,7 +31,7 @@ This project renders a maze using React and provides algorithms to choose from t
 -   Dijkstra's Algorithm
 -   A\* Search Algorithm
 
-![](https://github.com/phillipdinh/maze-2/blob/master/demo/solver.gif)
+![](https://github.com/phillipdinh/Maze-Generator-and-Pathfinder-Visualizer/blob/master/demo/solver.gif)
 
 ## Maze Component
 
@@ -56,9 +59,3 @@ Main component of the project.
 -   **distance:** Distance from starting node
 -   **totalDistance:** Distance + Manhattan distance from finish node
 -   **prevNode:** References previous node in processing
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
