@@ -34,26 +34,26 @@ Main component of the project.
 
 ### Ref Variables
 
--   stepCount: Integer to keep track of algorithm steps
--   start: Tuple of start node's column and row
--   finish: Tuple of finish node's column and row
+-   **stepCount:** Integer to keep track of algorithm steps
+-   **start:** Tuple of start node's column and row
+-   **finish:** Tuple of finish node's column and row
 
 ### State Variables
 
--   maze: 2d array of Nodes
--   loadingState: Used to stop user inputs while algorithms are visualized
--   generatedState: Used to style button while algorithms are visualized
+-   **maze:** 2d array of Nodes
+-   **loadingState:** Used to stop user inputs while algorithms are visualized
+-   **generatedState:** Used to style button while algorithms are visualized
 
 ## Node Component
 
--   col, row: Maze index
--   start, finish: Flags to set as starting or finish node
--   top, bottom, left, right: Flags to set "walls"
--   active, marked, inPath: Flags for visualizing algorithm
--   visited: Flag to prevent repeated node processing
--   distance: Distance from starting node
--   totalDistance: Distance + Manhattan distance from finish node
--   prevNode: References previous node in processing
+-   **col, row:** Maze index
+-   **start, finish:** Flags to set as starting or finish node
+-   **top, bottom, left, right:** Flags to set "walls"
+-   **active, marked, inPath:** Flags for visualizing algorithm
+-   **visited:** Flag to prevent repeated node processing
+-   **distance:** Distance from starting node
+-   **totalDistance:** Distance + Manhattan distance from finish node
+-   **prevNode:** References previous node in processing
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
