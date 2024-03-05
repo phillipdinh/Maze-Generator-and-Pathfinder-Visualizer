@@ -1,7 +1,6 @@
 # Maze Generator and Pathfinder Visualizer using React
 
-This project renders a maze using React and provides algorithms to choose from.
-When chosen the algorithms will traverse the maze to either generate the maze walls or show the path to the end.
+A Maze created with React that provides algorithms to choose from that will traverse the maze to either generate the maze walls or show the path to the end.
 
 ## Install Dependencies
 
