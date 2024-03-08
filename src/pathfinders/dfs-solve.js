@@ -1,6 +1,8 @@
 import { getRand, checkNeighborsSolve } from "../components/Maze/Maze-Helper"
 
-/* Solve maze with recursive DFS and track path taken
+/* Given starting node, finish node, maze state
+ * Find path from start to finish in maze with randomized recursive Depth First Search
+ * Return list of visited nodes while processing
  */
 export default function dfsSolve(startNode, finishNode, maze) {
 	function backTrack(node, maze) {

@@ -1,4 +1,9 @@
 import { checkNeighborsSolve, removeRandNode } from "../components/Maze/Maze-Helper"
+
+/* Given starting node, finish node, maze state
+ * Find path from start to finish in maze with randomized Dijkstra's Algorithm
+ * Return list of visited nodes while processing
+ */
 export default function dijkstra(startNode, finishNode, maze) {
 	startNode.distance = 0
 	const visitedNodes = []
@@ -12,8 +17,6 @@ export default function dijkstra(startNode, finishNode, maze) {
 		)
 		const closestNode = removeRandNode(closestNodes, openNodes)
 
-		// If the closest node is at a distance of infinity,
-		// we must be trapped and should therefore stop.
 		if (closestNode.distance === Infinity) {
 			return visitedNodes
 		}
@@ -27,7 +30,7 @@ export default function dijkstra(startNode, finishNode, maze) {
 	}
 }
 
-/////////////////// Helper Functions //////////////////////////
+// Flatten maze (2d array of nodes) to 1d array
 function getAllNodes(maze) {
 	const nodes = []
 	for (const row of maze) {
@@ -38,6 +41,7 @@ function getAllNodes(maze) {
 	return nodes
 }
 
+// Set distance of all neighbors to current distance + 1 and prevNode to current node
 function updateUnvisited(node, maze) {
 	const validNeighbors = checkNeighborsSolve(node.col, node.row, maze)
 	for (const neighbor of validNeighbors) {
@@ -46,8 +50,10 @@ function updateUnvisited(node, maze) {
 	}
 }
 
-// Backtracks from the finishNode to find the shortest path.
-// Only works when called *after* the dijkstra method above.
+/* Return list of nodes in path from start to finish.
+ * Use finish node to backstep through prevNodes to get path
+ * Only works after dijkstras function is called
+ */
 export function getShortestPath_dijkstras(finishNode) {
 	const nodesInShortestPathOrder = []
 	let currentNode = finishNode

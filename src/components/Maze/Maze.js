@@ -3,25 +3,22 @@ import Node from "../Node/Node"
 import Button from "../Button"
 import Loading from "../Loading"
 
-import dijkstra, { getShortestPath_dijkstras } from "../../solvers/dijkstras"
-import aStar, { getShortestPath_aStar } from "../../solvers/a-star"
-import dfsSolve from "../../solvers/dfs-solve"
+import dijkstra, { getShortestPath_dijkstras } from "../../pathfinders/dijkstras"
+import aStar, { getShortestPath_aStar } from "../../pathfinders/a-star"
+import dfsSolve from "../../pathfinders/dfs-solve"
 import dfsGen from "../../generators/dfs-gen"
 import divGen from "../../generators/div-gen"
 import primGen from "../../generators/prim-gen"
 
 import "./Maze.css"
 
-/*TODO:
-	Add algorithm info
-    Add header
-    Delete react stuff
-    Add button shadows
-*/
 const DELAY_GEN = 8
 const DELAY_SOLVE = 14
 
 export default function Maze() {
+	/* Apply algorithm to create walls of the maze
+	 * Used by: All Generators
+	 */
 	function animateMazeGen(visitedNodes, flag, callback) {
 		const len = visitedNodes.length
 		for (let i = 0; i < len; i++) {
@@ -45,6 +42,10 @@ export default function Maze() {
 			callback()
 		}, DELAY_GEN * len)
 	}
+
+	/* Show path from start to finish
+	 * Used by: A Star and Dijkstras
+	 */
 	function animateShortestPath(nodesInShortestPath, callback) {
 		const len = nodesInShortestPath.length
 		for (let i = 0; i < len; i++) {
@@ -62,6 +63,8 @@ export default function Maze() {
 			callback()
 		}, DELAY_SOLVE * len)
 	}
+
+	// Show all steps of DFS Solve algorithm
 	function animateDFSSolve(visitedNodes, callback) {
 		const len = visitedNodes.length
 		for (let i = 1; i < len; i++) {
@@ -84,6 +87,8 @@ export default function Maze() {
 			callback()
 		}, DELAY_SOLVE * len)
 	}
+
+	// Reset maze, call algorithm, animate algorithm
 	const visualize_dfsGen = (callback) => {
 		resetMaze()
 		const visitedNodes = dfsGen(maze)
@@ -100,7 +105,6 @@ export default function Maze() {
 		const visitedNodes = primGen(maze)
 		animateMazeGen(visitedNodes, true, callback)
 	}
-
 	const visualize_dfsSolve = (callback) => {
 		if (!generatedState) {
 			callback()
@@ -114,7 +118,6 @@ export default function Maze() {
 		)
 		animateDFSSolve(visitedNodes, callback)
 	}
-
 	const visualize_dijkstras = (callback) => {
 		if (!generatedState) {
 			callback()
@@ -148,9 +151,7 @@ export default function Maze() {
 		markNodes(visitedNodes, nodesInShortestPath, callback)
 	}
 
-	/* Used by visualize_dijkstras and visualize_aStar
-	 *
-	 */
+	// Used by visualize_dijkstras and visualize_aStar
 	function markNodes(visitedNodes, nodesInShortestPath, callback) {
 		const len = visitedNodes.length
 		for (let i = 0; i < len; i++) {
@@ -167,23 +168,31 @@ export default function Maze() {
 		}, DELAY_SOLVE * len)
 	}
 
+	/* Input: maze indexes, node prop, prop update
+	 * Then updates Node props
+	 */
 	function updateMaze(col, row, prop, update) {
 		let copyMaze = [...maze]
 		copyMaze[col][row][prop] = update
 		setMaze(copyMaze)
 	}
 
+	// Update node for animation of algorithm
 	function setMarked(col, row) {
 		updateMaze(col, row, "inPath", false)
 		updateMaze(col, row, "walls", false)
 		updateMaze(col, row, "marked", true)
 	}
 
+	// Update node for animation of path to finish node
 	function setShortestPath(col, row) {
 		updateMaze(col, row, "walls", false)
 		updateMaze(col, row, "inPath", true)
 	}
 
+	/* Remove all maze walls so generator can create walls.
+	 * Used by: Division Generator
+	 */
 	function delWalls() {
 		for (let c = 0; c < 16; c++) {
 			for (let r = 0; r < 16; r++) {
@@ -201,6 +210,19 @@ export default function Maze() {
 		}
 	}
 
+	// Set visited prop to false for all nodes
+	function resetVisited(delay, lengthNodes) {
+		for (let c = 0; c < 16; c++) {
+			for (let r = 0; r < 16; r++) {
+				updateMaze(c, r, "visited", false)
+			}
+		}
+		setTimeout(() => {
+			setLoadingState(false)
+		}, delay * lengthNodes)
+	}
+
+	// Reset Maze but keep walls
 	function resetSolve() {
 		setLoadingState(true)
 		stepCount.current = 0
@@ -216,43 +238,7 @@ export default function Maze() {
 		}
 	}
 
-	function resetVisited(delay, lengthNodes) {
-		for (let c = 0; c < 16; c++) {
-			for (let r = 0; r < 16; r++) {
-				updateMaze(c, r, "visited", false)
-			}
-		}
-		setTimeout(() => {
-			setLoadingState(false)
-		}, delay * lengthNodes)
-	}
-
-	function getRandStartFinish() {
-		start.current.col = Math.floor(Math.random() * 16)
-		start.current.row = Math.floor(Math.random() * 16)
-		finish.current.col = Math.floor(Math.random() * 16)
-		finish.current.row = Math.floor(Math.random() * 16)
-
-		// Make sure start and finish are more than 5 nodes aways
-		if (
-			Math.abs(start.current.col - finish.current.col) < 5 ||
-			Math.abs(start.current.row - finish.current.row) < 5
-		) {
-			getRandStartFinish()
-		}
-	}
-
-	function ifStartFinish(col, row) {
-		if (
-			(col === start.current.col && row === start.current.row) ||
-			(col === finish.current.col && row === finish.current.row)
-		) {
-			return true
-		} else {
-			return false
-		}
-	}
-
+	// Reset Maze completely
 	function resetMaze() {
 		setLoadingState(true)
 		setGeneratedState(false)
@@ -268,6 +254,34 @@ export default function Maze() {
 		}
 		updateMaze(start.current.col, start.current.row, "start", true)
 		updateMaze(finish.current.col, finish.current.row, "finish", true)
+	}
+
+	// Generate new start and finish indexes
+	function getRandStartFinish() {
+		start.current.col = Math.floor(Math.random() * 16)
+		start.current.row = Math.floor(Math.random() * 16)
+		finish.current.col = Math.floor(Math.random() * 16)
+		finish.current.row = Math.floor(Math.random() * 16)
+
+		// Make sure start and finish are more than 5 nodes aways
+		if (
+			Math.abs(start.current.col - finish.current.col) < 5 ||
+			Math.abs(start.current.row - finish.current.row) < 5
+		) {
+			getRandStartFinish()
+		}
+	}
+
+	// Check if given node is the start or finish
+	function ifStartFinish(col, row) {
+		if (
+			(col === start.current.col && row === start.current.row) ||
+			(col === finish.current.col && row === finish.current.row)
+		) {
+			return true
+		} else {
+			return false
+		}
 	}
 
 	const [maze, setMaze] = useState(mazeInit())

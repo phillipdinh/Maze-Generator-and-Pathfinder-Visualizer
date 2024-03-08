@@ -1,5 +1,8 @@
+/* Given maze state
+ * Generate walls of maze with recursive randomized Recursive Division
+ * Return list of visited nodes while processing
+ */
 export default function divGen(maze) {
-	// TODO: better comments
 	function divide(col, row, width, height, orientation) {
 		if (width < 2 || height < 2) return
 
@@ -64,8 +67,7 @@ export default function divGen(maze) {
 	return visitedNodes
 }
 
-/* Return smaller orientation or random if equal
- */
+// Return smaller orientation or random if equal
 function chooseOrientation(width, height) {
 	if (width < height) return "horizontal"
 	else if (height < width) return "vertical"

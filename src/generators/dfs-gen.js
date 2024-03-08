@@ -5,6 +5,10 @@ import {
 	getDirection
 } from "../components/Maze/Maze-Helper"
 
+/* Given maze state
+ * Generate walls of maze with recursive randomized Depth First Search
+ * Return list of visited nodes while processing
+ */
 export default function dfsGen(maze) {
 	function backTrack(node) {
 		node.visited = true
