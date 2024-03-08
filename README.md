@@ -1,20 +1,6 @@
 # Maze Generator and Pathfinder Visualizer using React
 
-A Maze created with React that provides algorithms to choose from that will traverse the maze to either generate the maze walls or show the path to the end.
-
-## Install Dependencies
-
-```bash
-    npm install
-```
-
-## Run Project
-
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-```bash
-    npm start
-```
+React-based website that renders a Maze and provides algorithms to choose from that will traverse the maze to either generate the maze walls or show the path to the end.
 
 ## Generator Algorithms
 
@@ -58,3 +44,23 @@ Main component of the project.
 -   **distance:** Distance from starting node
 -   **totalDistance:** Distance + Manhattan distance from finish node
 -   **prevNode:** References previous node in processing
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/phillipdinh/Maze-Generator-and-Pathfinder-Visualizer.git
+```
+
+2. Install dependencies:
+
+```
+npm install
+```
+
+3. Run the application:
+
+```
+npm start
+```
