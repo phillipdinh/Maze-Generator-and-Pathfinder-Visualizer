@@ -8,12 +8,9 @@ function Button(props) {
 
 	// Function to handle click event and toggle the button's active state
 	const handleClick = () => {
-		setIsSelected(true) // Toggle the active state
-
-		// Call props.onClick and provide a callback function
+		setIsSelected(true)
 		props.onClick &&
 			props.onClick(() => {
-				// Callback function to reset isSelected back to false
 				setIsSelected(false)
 			})
 	}
